@@ -983,6 +983,10 @@ async function submit(){
   }catch(e){
     b.disabled=false; b.textContent="Prześlij zgłoszenie";
     const el=document.createElement("div"); el.id="sendErr"; el.className="note warn"; el.setAttribute("role","alert"); el.style.marginTop="14px";
+    if(/activat/i.test(e.message||"")){
+      el.className="note"; el.innerHTML=`<p><b>Formularz czeka na aktywację.</b> Na adres odbiorcy zgłoszeń wysłano e-mail od FormSubmit z przyciskiem „Activate Form”. Po kliknięciu go wyślij zgłoszenie jeszcze raz. Dane są zapisane w tej przeglądarce.</p>`;
+      $(".actions").before(el); return;
+    }
     el.innerHTML=`<p><b>Nie udało się wysłać zgłoszenia.</b> Sprawdź połączenie z internetem i kliknij „Prześlij zgłoszenie” jeszcze raz. Twoje dane są zapisane w tej przeglądarce.</p><p class="hint">Szczegóły: ${esc(e.name==="AbortError"?"przekroczono czas oczekiwania":e.message)}</p>`;
     $(".actions").before(el);
   }finally{ sending=false; }
