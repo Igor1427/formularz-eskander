@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Formularz zleceniobiorcy Eskander</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Manrope:wght@400;500;600;700&family=Figtree:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&family=DM+Serif+Display&family=Work+Sans:wght@400;500;600&family=Lora:wght@500;600&family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700&family=Quattrocento:wght@400;700&family=Quattrocento+Sans:wght@400;700&family=Abhaya+Libre:wght@500;600;700&family=Questrial&family=Urbanist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: neutralny pasek makiety → jasny nagłówek z paletą → lista kroków + biała karta formularza.
+   Zasady w duchu Apple: jasne neutralne tło, białe powierzchnie, cienkie linie zamiast cieni, kolor tylko tam, gdzie można kliknąć.
+   Celowo tylko jasny motyw. Tokeny poniżej = wariant 1; pozostałe dopisuje skrypt jako :root[data-variant="N"]. */
+:root{
+  --bg:#F6F7FB; --surface:#FFFFFF; --fg:#1C1B2E; --muted:#6B6B80; --line:#E4E5EE;
+  --accent:#4338CA; --accent-fg:#FFFFFF; --accent-soft:#F1F2FD; --sel:#6366F1; --hi:#A5B4FC;
+  --p1:#1E1B4B; --p2:#4338CA; --p3:#6366F1; --p4:#A5B4FC; --p5:#E0E7FF; --p6:#F8FAFF;
+  --err:#C0261A; --err-soft:#FDECEA; --warn:#7A4B00; --warn-soft:#FFF4D6;
+  --paper:#FFFFFF; --paper-ink:#1B1B1B; --ink:#14325C;
+  --f-head:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --hw:700; --ht:-0.02em; --rb:999px; --rc:18px; --rf:11px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+:root,:root[data-theme],html,body{color-scheme:light}
+/* własne pola wyboru: zawsze jasne w środku, niezależnie od trybu ciemnego systemu */
+input[type=checkbox],input[type=radio]{-webkit-appearance:none;appearance:none;flex:none;width:20px!important;height:20px!important;margin:1px 0 0;background:#FFFFFF;border:1.5px solid color-mix(in srgb,var(--muted) 55%,var(--line));border-radius:6px;display:inline-grid;place-items:center;cursor:pointer;transition:background-color .15s,border-color .15s}
+input[type=radio]{border-radius:50%}
+input[type=checkbox]:hover,input[type=radio]:hover{border-color:var(--accent)}
+input[type=checkbox]:checked{background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3.2L15 7' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat;border-color:var(--accent)}
+input[type=radio]:checked{border-color:var(--accent);background:radial-gradient(circle,var(--accent) 0 5px,#FFFFFF 5.5px)}
+input[type=checkbox]:focus-visible,input[type=radio]:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;font-weight:var(--bw,400);line-height:1.47;-webkit-font-smoothing:antialiased;transition:background-color .3s}
+.wrap{max-width:1080px;margin:0 auto;padding-block:18px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.15;font-family:var(--f-head);font-weight:var(--hw);letter-spacing:var(--ht)}
+/* pasek makiety */
+.mock{display:grid;gap:10px;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13.5px;margin-bottom:16px}
+.mock .dot{display:inline-block;background:var(--warn-soft);color:var(--warn);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;margin-right:6px}
+.mock .row{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+.mock b{font-weight:600}
+.mock .btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mock .btn{border-color:var(--line);background:var(--surface);color:var(--fg);border-radius:9px;min-height:0}
+.mock .lbl{font-weight:600;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.vsw{display:flex;flex-wrap:wrap;gap:6px}
+.vsw button{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:7px;padding:5px 10px 5px 6px;border-radius:99px;background:var(--bg);color:var(--fg);border:1.5px solid transparent;font-size:13px;font-family:var(--f-body)}
+.vsw button[aria-checked="true"]{border-color:var(--fg);font-weight:600}
+.vsw button:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+.sw{display:inline-flex}
+.sw i{width:14px;height:14px;border-radius:50%;margin-left:-5px;border:1.5px solid var(--surface)}
+.sw i:first-child{margin-left:0}
+.toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13px}
+.toggle input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+/* nagłówek */
+.hero{position:relative;overflow:hidden;border-radius:var(--rc);background:var(--surface);border:1px solid var(--line);color:var(--fg);padding:28px 30px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:18px;position:relative;z-index:1;min-width:0}
+.logo{width:56px;height:56px;border-radius:14px;border:1.5px dashed var(--line);background:var(--bg);display:grid;place-items:center;font-size:10.5px;color:var(--muted);text-align:center;line-height:1.15;flex:none}
+.eyebrow{margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.brand h1{font-size:clamp(28px,4vw,40px)}
+.brand p.sub{margin:6px 0 0;color:var(--muted);font-size:15px}
+.pills{display:flex;flex:none;align-items:center}
+.pills span{display:block;width:30px;height:46px;border-radius:99px;margin-left:-10px;border:2px solid var(--surface)}
+.pills span:first-child{margin-left:0}
+.pills span:nth-child(1){background:var(--p1)}.pills span:nth-child(2){background:var(--p2)}.pills span:nth-child(3){background:var(--p3)}
+.pills span:nth-child(4){background:var(--p4)}.pills span:nth-child(5){background:var(--p5)}.pills span:nth-child(6){background:var(--p6);box-shadow:inset 0 0 0 1px var(--line)}
+/* układ */
+.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:22px;align-items:start}
+nav.steps{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}
+nav.steps ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+nav.steps button{all:unset;box-sizing:border-box;width:100%;display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:var(--rf);color:var(--muted);cursor:pointer;font-size:14px;font-family:var(--f-body)}
+nav.steps button:disabled{cursor:default;opacity:.55}
+nav.steps button:not(:disabled):hover{background:var(--surface)}
+nav.steps button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+nav.steps .n{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:12px;font-family:var(--f-mono);flex:none;background:var(--surface)}
+nav.steps li.done .n{background:var(--accent-soft);border-color:var(--sel);color:var(--fg)}
+nav.steps li.cur button{color:var(--fg);font-weight:600;background:var(--surface)}
+nav.steps li.cur .n{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.mprog{display:none}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--rc);padding:32px 34px 24px;min-width:0}
+.card>h2,.done-head h2{font-size:28px}
+.lead{color:var(--muted);margin:6px 0 22px;max-width:65ch}
+.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:16px 14px}
+.f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.s1{grid-column:span 1}.s2{grid-column:span 2}.s3{grid-column:span 3}.s4{grid-column:span 4}.s6{grid-column:1/-1}
+.f>label,.f legend,.lrow>label{font-size:13.5px;font-weight:600}
+.lrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.cnt{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.inl{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);cursor:pointer;width:fit-content;margin-top:2px}
+.req{color:var(--err);margin-left:2px}
+.opt{color:var(--muted);font-weight:400;font-size:12.5px;margin-left:4px}
+input[type=text],input[type=email],input[type=tel],input[type=date],select{font:inherit;color:var(--fg);background:var(--surface);border:1px solid color-mix(in srgb,var(--muted) 35%,var(--line));border-radius:var(--rf);padding:0 14px;min-height:46px;width:100%;min-width:0;transition:border-color .15s,box-shadow .15s}
+input.mono{font-family:var(--f-mono);letter-spacing:.02em}
+input::placeholder{color:color-mix(in srgb,var(--muted) 70%,transparent)}
+input:focus,select:focus{outline:none;border-color:var(--sel);box-shadow:0 0 0 3px color-mix(in srgb,var(--sel) 25%,transparent)}
+input[readonly]{background:var(--accent-soft);color:var(--muted)}
+.f.bad input,.f.bad select{border-color:var(--err)}
+.hint{margin:0;color:var(--muted);font-size:12.5px}
+.err{margin:0;color:var(--err);font-size:12.5px;font-weight:600}
+.err:empty{display:none}
+.hsec{grid-column:1/-1;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:16px;border-top:1px solid var(--line)}
+.hsec:first-child{margin-top:0;padding-top:0;border-top:0}
+.hsec h3{font-size:16.5px}
+.hsec .poz{font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;background:var(--accent-soft);padding:2px 8px;border-radius:99px}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+.radios{display:grid;gap:8px}
+.radios.row{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.opt-card{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);border-radius:var(--rf);padding:11px 13px;cursor:pointer;background:var(--surface);transition:border-color .15s,background-color .15s}
+.opt-card:hover{border-color:color-mix(in srgb,var(--sel) 55%,var(--line))}
+.opt-card:has(input:checked){border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--accent-soft)}
+.opt-card input{margin:3px 0 0;accent-color:var(--accent);flex:none;width:17px;height:17px}
+.opt-card small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
+.opt-card .t{font-size:14.5px}
+.f.bad .opt-card{border-color:color-mix(in srgb,var(--err) 60%,var(--line))}
+.q{border:1px solid var(--line);border-radius:var(--rf);padding:12px 14px;display:grid;gap:12px;transition:border-color .15s}
+.q:has(>.opt-card input:checked){border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--accent-soft)}
+.q>.opt-card,.q>.opt-card:has(input:checked){border:0;padding:0;background:none;box-shadow:none}
+.q .sub{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;padding-left:28px}
+.note{grid-column:1/-1;background:var(--accent-soft);border-radius:var(--rf);padding:12px 14px;font-size:14px;color:var(--fg)}
+.note.warn{background:var(--warn-soft);color:var(--warn)}
+.note.plain{background:var(--bg)}
+.note p{margin:0 0 6px}.note p:last-child{margin:0}
+.note ol,.note ul{margin:6px 0 0;padding-left:20px}
+.tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:99px;background:var(--warn-soft);color:var(--warn);vertical-align:2px;margin-left:6px}
+.actions{display:flex;justify-content:space-between;gap:10px;margin-top:26px;padding-top:18px;border-top:1px solid var(--line);flex-wrap:wrap}
+.btn{font:inherit;font-weight:600;border-radius:var(--rb);padding:11px 24px;min-height:46px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;transition:filter .15s,border-color .15s,transform .1s}
+.btn:hover{border-color:var(--muted)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.sm{padding:6px 12px;font-size:13px;font-weight:500;min-height:0}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--accent);padding-inline:6px;box-shadow:none}
+.btn:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+.btn:disabled{opacity:.6;cursor:progress}
+/* wybór umowy */
+.kinds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.kind{all:unset;box-sizing:border-box;cursor:pointer;border:1px solid var(--line);border-radius:var(--rc);padding:20px;display:grid;gap:10px;background:var(--surface);position:relative;overflow:hidden;font-family:var(--f-body);transition:border-color .15s,background-color .15s}
+.kind:hover{border-color:var(--sel)}
+.kind:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+.kind.sel{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--accent-soft)}
+.kind h3{font-size:19px}
+.kind ul{margin:0;padding-left:18px;color:var(--muted);font-size:13.5px}
+.kind .code{display:inline-grid;place-items:center;width:42px;height:26px;border-radius:99px;font-family:var(--f-mono);font-size:11.5px;font-weight:500;background:var(--accent-soft);color:var(--accent);letter-spacing:.05em}
+.kind.sel .code{background:var(--accent);color:var(--accent-fg)}
+/* lista z wyszukiwaniem */
+.cbw{position:relative}
+.cbw input{padding-right:38px}
+.cbw .cbt{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:32px;height:32px;border:0;background:none;color:var(--muted);cursor:pointer;border-radius:8px;font-size:12px}
+.lb{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;margin:0;padding:6px;list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--rf);max-height:290px;overflow:auto;box-shadow:0 18px 40px -16px rgba(0,0,0,.25)}
+.lb li{padding:8px 10px;border-radius:8px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:14px}
+.lb li small{color:var(--muted);font-size:12px;white-space:nowrap}
+.lb li[aria-selected="true"]{background:var(--accent-soft)}
+.lb li mark{background:none;color:inherit;font-weight:700;text-decoration:underline;text-decoration-color:var(--sel);text-underline-offset:3px}
+.lb li.grp{cursor:default;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 10px 4px}
+.lb li.empty{cursor:default;color:var(--muted);font-size:13px}
+/* podsumowanie */
+.sum{display:grid;gap:14px;margin-bottom:22px}
+.sum section{border:1.5px solid var(--line);border-radius:var(--rf);overflow:hidden}
+.sum .sh{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;background:var(--accent-soft);font-weight:600;font-size:14px;font-family:var(--f-head)}
+.sum dl{margin:0;display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr)}
+.sum dt,.sum dd{margin:0;padding:6px 12px;border-top:1px solid var(--line);font-size:13.5px;min-width:0;overflow-wrap:anywhere}
+.sum dt{color:var(--muted)}
+.sig{grid-column:1/-1;display:grid;gap:6px}
+.sigbox{position:relative;border:1.5px dashed var(--line);border-radius:var(--rf);background:var(--surface);height:170px;touch-action:none}
+.f.bad .sigbox{border-color:var(--err)}
+.sigbox canvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair}
+.sigbox .ph{position:absolute;left:16px;bottom:30px;right:16px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12.5px;pointer-events:none;padding-bottom:4px}
+.sigrow{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.sigrow label{font-size:13.5px;font-weight:600}
+.sugg{grid-column:1/-1}
+details.rodo{grid-column:1/-1;font-size:13px;color:var(--muted)}
+details.rodo summary{cursor:pointer;color:var(--accent)}
+/* po wysłaniu */
+.done-head{display:flex;gap:14px;align-items:flex-start}
+.check{width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;flex:none;font-size:20px}
+.mono{font-family:var(--f-mono)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:22px 0 14px;border-bottom:1px solid var(--line)}
+.tabs button{all:unset;cursor:pointer;padding:8px 12px;font-size:14px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;font-family:var(--f-body)}
+.tabs button[aria-selected=true]{color:var(--fg);border-color:var(--sel);font-weight:600}
+.tabs button:focus-visible{outline:2px solid var(--sel)}
+.mail{border:1.5px solid var(--line);border-radius:var(--rf);overflow:hidden}
+.mail .mh{padding:12px 14px;background:var(--accent-soft);font-size:13.5px;display:grid;gap:3px}
+.mail .mh b{display:inline-block;min-width:58px;color:var(--muted);font-weight:500}
+.mail .mb{padding:14px;font-size:14px;overflow-x:auto}
+.att{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.att span{border:1px solid var(--line);border-radius:7px;padding:5px 9px;font-size:12.5px;font-family:var(--f-mono)}
+.mail table{border-collapse:collapse;font-size:13px;min-width:420px}
+.mail td{border-top:1px solid var(--line);padding:4px 10px 4px 0;vertical-align:top}
+.mail td:first-child{color:var(--muted);white-space:nowrap}
+.paperwrap{overflow-x:auto;background:color-mix(in srgb,var(--line) 40%,transparent);border-radius:var(--rf);padding:16px}
+.paper{background:var(--paper);color:var(--paper-ink);width:100%;max-width:720px;min-width:560px;margin:0 auto;padding:40px 46px;font-family:"Times New Roman",Times,serif;font-size:13px;line-height:1.45;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.paper h4{text-align:center;font-size:16px;margin:0 0 14px}
+.paper h5{font-size:13px;margin:12px 0 4px}
+.paper .fl{border-bottom:1px dotted #888;padding:0 4px;font-family:var(--f-mono);font-size:12px;color:#0d2a6b}
+.paper p{margin:3px 0}
+.paper ol{margin:4px 0;padding-left:20px}
+.paper li{margin:3px 0}
+.paper .bx{font-family:var(--f-mono);color:#0d2a6b}
+.paper .sigline{margin-top:28px;display:flex;justify-content:flex-end}
+.paper .sigline div{text-align:center;font-size:11px}
+.paper .sigline img{display:block;height:54px;margin:0 auto -6px}
+.paper .small{font-size:11.5px}
+.foot{margin-top:18px;color:var(--muted);font-size:12.5px;max-width:70ch}
+@media (max-width:820px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  nav.steps{display:none}
+  .mprog{display:block;margin-bottom:14px}
+  .mprog .bar{height:6px;background:var(--line);border-radius:9px;overflow:hidden;margin-top:6px}
+  .mprog .bar i{display:block;height:100%;background:var(--accent);border-radius:9px;transition:width .25s}
+  .mprog p{margin:0;font-size:13.5px;color:var(--muted)}
+  .mprog b{color:var(--fg)}
+}
+@media (max-width:600px){
+  .hero{padding:20px;flex-direction:column;align-items:flex-start}
+  .pills span{width:22px;height:30px;margin-left:-7px}
+  .logo{width:46px;height:46px}
+  .card{padding:20px 16px}
+  .grid,.q .sub{grid-template-columns:minmax(0,1fr)}
+  .s1,.s2,.s3,.s4,.s6{grid-column:1/-1}
+  .q .sub{padding-left:0}
+  .kinds{grid-template-columns:minmax(0,1fr)}
+  .sum dl{grid-template-columns:minmax(0,1fr)}
+  .sum dd{border-top:0;padding-top:0}
+  .actions .btn{flex:1}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="mock" role="region" aria-label="Ustawienia makiety">
+    <div class="row">
+      <div><span class="dot">Tryb testowy</span> Zgłoszenie zostanie naprawdę wysłane e-mailem. Używaj danych fikcyjnych.</div>
+      <label class="toggle"><input type="checkbox" id="skipVal"> Pomiń sprawdzanie danych</label>
+    </div>
+    <div class="row">
+      <div class="btns"><span class="lbl">Wariant</span><div class="vsw" id="vsw" role="radiogroup" aria-label="Wariant graficzny"></div></div>
+      <div class="btns">
+        <button class="btn sm" type="button" id="demoZ">Przykład: zlecenie</button>
+        <button class="btn sm" type="button" id="demoD">Przykład: dzieło</button>
+        <button class="btn sm" type="button" id="reset">Wyczyść</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">logo<br>firmy</div>
+      <div>
+        <p class="eyebrow">Eskander · kadry i płace</p>
+        <h1>Dane do umowy</h1>
+        <p class="sub">Oświadczenie Zleceniobiorcy lub Wykonawcy dzieła · ok. 5–8 minut</p>
+      </div>
+    </div>
+    <div class="pills" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  </header>
+
+  <div class="layout">
+    <nav class="steps" aria-label="Kroki formularza"><ol id="stepList"></ol></nav>
+    <main class="card" id="card">
+      <div class="mprog" id="mprog"></div>
+      <div id="view"></div>
+    </main>
+  </div>
+  <p class="foot">Połączenie szyfrowane. Wersja robocza zapisuje się w tej przeglądarce, możesz wrócić później. Po wysłaniu zgłoszenia jest z niej usuwana.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+const ESC={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"};
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>ESC[c]);
+const $=s=>document.querySelector(s);
+const PLATNIK="[pełna nazwa firmy Eskander — do uzupełnienia]";
+const MAIL_ESK="[e-mail Eskander]", MAIL_ASTON="[e-mail Działu Kadr Aston]";
+
+const WOJ=["dolnośląskie","kujawsko-pomorskie","lubelskie","lubuskie","łódzkie","małopolskie","mazowieckie","opolskie","podkarpackie","podlaskie","pomorskie","śląskie","świętokrzyskie","warmińsko-mazurskie","wielkopolskie","zachodniopomorskie"];
+const NFZ=["Dolnośląski","Kujawsko-Pomorski","Lubelski","Lubuski","Łódzki","Małopolski","Mazowiecki","Opolski","Podkarpacki","Podlaski","Pomorski","Śląski","Świętokrzyski","Warmińsko-Mazurski","Wielkopolski","Zachodniopomorski"].map(n=>n+" Oddział Wojewódzki NFZ");
+
+/* ---------- warianty graficzne ---------- */
+const VARIANTS={
+ 1:{name:"Indygo",head:"Plus Jakarta Sans",body:"Inter",hw:700,ht:"-0.025em",rb:"999px",rc:"18px",rf:"11px",
+    pal:["#1E1B4B","#4338CA","#6366F1","#A5B4FC","#E0E7FF","#F8FAFF"],
+    L:{bg:"#F6F7FB",surface:"#FFFFFF",fg:"#1C1B2E",muted:"#6B6B80",line:"#E4E5EE",accent:"#4338CA","accent-fg":"#FFFFFF","accent-soft":"#F1F2FD",sel:"#6366F1"}},
+ 2:{name:"Ember",head:"Bricolage Grotesque",body:"Manrope",hw:700,ht:"-0.02em",rb:"999px",rc:"18px",rf:"11px",
+    pal:["#7F1D1D","#DC2626","#F97316","#FDBA74","#FFE4C7","#FFF7ED"],
+    L:{bg:"#FAF8F6",surface:"#FFFFFF",fg:"#231A16",muted:"#76675F",line:"#EEE7E1",accent:"#C2410C","accent-fg":"#FFFFFF","accent-soft":"#FFF5EC",sel:"#F97316"}},
+ 3:{name:"Ocean Teal",head:"Figtree",body:"Source Sans 3",hw:700,ht:"-0.02em",rb:"999px",rc:"16px",rf:"10px",
+    pal:["#0F4C5C","#187C81","#2A9D8F","#A8DADC","#E0F7F4","#F7FFFD"],
+    L:{bg:"#F5F8F8",surface:"#FFFFFF",fg:"#13282C",muted:"#5E7275",line:"#E1EAEA",accent:"#187C81","accent-fg":"#FFFFFF","accent-soft":"#EEF7F6",sel:"#2A9D8F"}},
+ 4:{name:"Malina",head:"DM Serif Display",body:"Work Sans",hw:400,ht:"0",rb:"999px",rc:"18px",rf:"11px",
+    pal:["#800021","#881144","#C2185B","#C24366","#FF69B4","#FFE4D8"],
+    L:{bg:"#FAF7F8",surface:"#FFFFFF",fg:"#26141A",muted:"#7A6268",line:"#EFE4E7",accent:"#881144","accent-fg":"#FFFFFF","accent-soft":"#FCF0F4",sel:"#C2185B"}},
+ 5:{name:"Mocha",head:"Lora",body:"Nunito Sans",hw:600,ht:"-0.01em",rb:"999px",rc:"16px",rf:"10px",
+    pal:["#4B0F1F","#7A3F56","#B78793","#E8C9D0","#F7EFEF","#FFFCFA"],
+    L:{bg:"#FAF7F7",surface:"#FFFFFF",fg:"#2B1A1F",muted:"#76656A",line:"#EEE5E7",accent:"#7A3F56","accent-fg":"#FFFFFF","accent-soft":"#F9F1F3",sel:"#B78793"}},
+ 6:{name:"Mgła · Quattrocento",head:"Quattrocento",body:"Quattrocento Sans",hw:700,ht:"-0.005em",rb:"999px",rc:"20px",rf:"12px",
+    pal:["#5D6B6B","#B0D7D8","#D5E5E5","#F1F7F7","#DDD3D3","#F7CBCA"],
+    L:{bg:"#F4F8F8",surface:"#FFFFFF",fg:"#1F2828",muted:"#647070",line:"#E0E9E9",accent:"#5D6B6B","accent-fg":"#FFFFFF","accent-soft":"#EEF6F6",sel:"#5D6B6B"}},
+ 7:{name:"Mgła · Abhaya Libre",head:"Abhaya Libre",body:"Quattrocento Sans",hw:700,ht:"-0.005em",rb:"999px",rc:"20px",rf:"12px",
+    pal:["#5D6B6B","#B0D7D8","#D5E5E5","#F1F7F7","#DDD3D3","#F7CBCA"],
+    L:{bg:"#FBF7F7",surface:"#FFFFFF",fg:"#1F2828",muted:"#666E6E",line:"#ECE3E3",accent:"#5D6B6B","accent-fg":"#FFFFFF","accent-soft":"#FCF0F0",sel:"#5D6B6B"}},
+ 8:{name:"Mgła · Peridot",head:"Questrial",body:"Urbanist",hw:400,ht:"-0.01em",rb:"999px",rc:"22px",rf:"12px",
+    pal:["#5D6B6B","#B0D7D8","#D5E5E5","#F1F7F7","#DDD3D3","#F7CBCA"],
+    L:{bw:"500",bg:"#F5F8F8",surface:"#FFFFFF",fg:"#1F2828",muted:"#5F6B6B",line:"#E0E9E9",accent:"#5D6B6B","accent-fg":"#FFFFFF","accent-soft":"#EEF6F6",sel:"#5D6B6B"}},
+};
+(function injectVariants(){
+  const tok=o=>Object.entries(o).map(([k,v])=>`--${k}:${v}`).join(";");
+  const SANS='system-ui,-apple-system,"Segoe UI",Roboto,sans-serif', SERIF='Georgia,"Times New Roman",serif';
+  let css="";
+  for(const [n,v] of Object.entries(VARIANTS)){
+    const headStack=/Serif|Lora|Quattrocento$|Abhaya/.test(v.head)?SERIF:SANS;
+    css+=`:root[data-variant="${n}"]{${tok(v.L)};--f-head:"${v.head}",${headStack};--f-body:"${v.body}",${SANS};--hw:${v.hw};--ht:${v.ht};--rb:${v.rb};--rc:${v.rc};--rf:${v.rf};`+v.pal.map((c,i)=>`--p${i+1}:${c}`).join(";")+`}\n`;
+  }
+  const st=document.createElement("style"); st.textContent=css; document.head.appendChild(st);
+})();
+const TEST=new URLSearchParams(location.search).has("test");
+if(!TEST){ const mk=document.querySelector(".mock"); if(mk) mk.hidden=true; }
+let variant="8";
+try{ variant=localStorage.getItem("eskander-wariant")||"1"; }catch(e){}
+variant="8"; const hv=TEST&&/^#wariant-([1-8])$/.exec(location.hash); if(hv) variant=hv[1];
+function setVariant(n,push){
+  variant=String(n); document.documentElement.dataset.variant=variant;
+  try{ localStorage.setItem("eskander-wariant",variant); }catch(e){}
+  if(push&&location.hash!=="#wariant-"+variant){ try{ history.replaceState(null,"","#wariant-"+variant); }catch(e){ location.hash="wariant-"+variant; } }
+  $("#vsw").innerHTML=Object.entries(VARIANTS).map(([k,v])=>`<button type="button" role="radio" aria-checked="${k===variant}" data-variant="${k}"><span class="sw">${[v.pal[0],v.pal[2],v.pal[4]].map(c=>`<i style="background:${c}"></i>`).join("")}</span>${k}. ${esc(v.name)}</button>`).join("");
+}
+setVariant(variant,false);
+window.addEventListener("hashchange",()=>{ const m=/^#wariant-([1-8])$/.exec(location.hash); if(m) setVariant(m[1],false); });
+
+/* ---------- dane TERYT i urzędy skarbowe ---------- */
+let GEO=null; // {w:[[woj,[[powiat,czyMiasto,[[gmina,rodz]]]]]], us:[[kod,nazwa]]}
+const norm=s=>String(s||"").toLowerCase().replace(/ł/g,"l").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const RODZ={m:"gmina miejska",w:"gmina wiejska",mw:"gmina miejsko-wiejska"};
+function wojEntry(p){ return GEO&&GEO.w.find(x=>x[0]===d[p+"woj"]); }
+function powEntry(p){ const w=wojEntry(p); return w&&w[1].find(x=>x[0]===d[p+"powiat"]); }
+const SRC={
+  powiat:p=>{ const w=wojEntry(p); if(!w) return {empty:"Najpierw wybierz województwo."};
+    return {items:w[1].map(x=>({v:x[0],sub:x[1]?"miasto na prawach powiatu":"powiat"}))}; },
+  gmina:p=>{ const pw=powEntry(p); if(!pw) return {empty:"Najpierw wybierz powiat."};
+    const cnt={}; pw[2].forEach(g=>cnt[g[0]]=(cnt[g[0]]||0)+1);
+    return {items:pw[2].map(g=>({v:cnt[g[0]]>1?`${g[0]} (${RODZ[g[1]]})`:g[0],sub:RODZ[g[1]]}))}; },
+  us:()=>{ if(!GEO) return {empty:"Wczytywanie listy urzędów…"};
+    const wi=WOJ.indexOf(d.woj), code=wi>=0?String(2+wi*2).padStart(2,"0"):"";
+    const stems=[d.gmina,d.powiat].filter(Boolean).map(s=>norm(s.replace(/\s*\(.*\)$/,"")).slice(0,6)).filter(s=>s.length>=4);
+    const all=GEO.us.map(([c,n])=>({v:n,c,sub:"kod "+c}));
+    const fit=all.filter(x=>x.c.startsWith(code)&&stems.some(s=>norm(x.v).includes(s)));
+    const inWoj=all.filter(x=>x.c.startsWith(code)&&!fit.includes(x));
+    const rest=all.filter(x=>!fit.includes(x)&&!inWoj.includes(x));
+    const groups=[];
+    if(fit.length) groups.push({label:"Pasujące do Twojego adresu",items:fit});
+    if(inWoj.length) groups.push({label:"Województwo "+d.woj,items:inWoj});
+    groups.push({label:code?"Pozostałe urzędy":"Wszystkie urzędy skarbowe",items:rest});
+    return {groups}; },
+};
+
+/* ---------- walidatory ---------- */
+function peselInfo(p){
+  if(!/^\d{11}$/.test(p)) return null;
+  const w=[1,3,7,9,1,3,7,9,1,3]; let s=0; for(let i=0;i<10;i++) s+=w[i]*+p[i];
+  if((10-s%10)%10!==+p[10]) return null;
+  let y=+p.slice(0,2), m=+p.slice(2,4), dd=+p.slice(4,6), c=1900;
+  if(m>80){c=1800;m-=80}else if(m>60){c=2200;m-=60}else if(m>40){c=2100;m-=40}else if(m>20){c=2000;m-=20}
+  y+=c; const dt=new Date(Date.UTC(y,m-1,dd));
+  if(dt.getUTCMonth()!==m-1) return null;
+  return {iso:`${y}-${String(m).padStart(2,"0")}-${String(dd).padStart(2,"0")}`};
+}
+function age(iso){ if(!iso) return null; const b=new Date(iso), n=new Date(); let a=n.getFullYear()-b.getFullYear(); if(n.getMonth()<b.getMonth()||(n.getMonth()===b.getMonth()&&n.getDate()<b.getDate())) a--; return a; }
+const V={
+  pesel:v=>peselInfo(v.replace(/\s/g,""))?"":"Numer PESEL jest niepoprawny. Sprawdź, czy ma 11 cyfr i nie ma literówki.",
+  nip:v=>{const n=v.replace(/[\s-]/g,""); if(!/^\d{10}$/.test(n)) return "NIP ma 10 cyfr."; const w=[6,5,7,2,3,4,5,6,7]; let s=0; for(let i=0;i<9;i++) s+=w[i]*+n[i]; return s%11===+n[9]?"":"NIP jest niepoprawny (błędna cyfra kontrolna).";},
+  kod:v=>/^\d{2}-\d{3}$/.test(v.trim())?"":"Wpisz kod w formacie 00-000.",
+  email:v=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())?"":"Ten adres e-mail wygląda na niepełny.",
+  tel:v=>v.replace(/[\s()+-]/g,"").length>=9?"":"Numer telefonu jest za krótki.",
+  iban:v=>{let s=v.replace(/\s/g,"").toUpperCase(); if(/^\d{26}$/.test(s)) s="PL"+s; if(!/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(s)) return "Numer konta powinien mieć 26 cyfr.";
+    const r=(s.slice(4)+s.slice(0,4)).replace(/[A-Z]/g,c=>c.charCodeAt(0)-55); let m=0; for(const ch of r) m=(m*10+ +ch)%97;
+    return m===1?"":"Numer konta jest niepoprawny. Sprawdź cyfry.";},
+  rok:v=>/^20\d{2}$/.test(v)?"":"Wpisz rok, np. 2026."
+};
+const fmtIban=v=>{let s=String(v||"").replace(/\s/g,"").toUpperCase(); if(s.startsWith("PL")) s=s.slice(2); return [s.slice(0,2),...(s.slice(2).match(/.{1,4}/g)||[])].filter(Boolean).join(" ");};
+
+/* ---------- definicja pól ---------- */
+const F=(id,label,o={})=>({id,label,type:"text",span:3,req:true,...o});
+const H=(label,poz)=>({type:"h",label,poz});
+const N=(html,o={})=>({type:"note",html,...o});
+let d={};
+const Z=()=>d.rodzaj==="zlecenie";
+
+function addr(p,show){
+  return [
+    F(p+"woj","Województwo",{type:"select",options:WOJ,span:2,show}),
+    F(p+"powiat","Powiat",{type:"combo",src:"powiat",pref:p,span:2,ph:"Zacznij pisać…",show}),
+    F(p+"gmina","Gmina",{type:"combo",src:"gmina",pref:p,span:2,ph:"Zacznij pisać…",show}),
+    F(p+"ulica","Ulica",{span:4,req:false,hint:"Zostaw puste, jeśli miejscowość nie ma ulic.",show}),
+    F(p+"nr_domu","Nr domu",{span:1,show}),
+    F(p+"nr_m","Nr mieszk.",{span:1,req:false,ph:"opcjonalnie",show}),
+    F(p+"miejscowosc","Miejscowość",{span:2,show}),
+    F(p+"kod","Kod pocztowy",{span:2,v:V.kod,ph:"00-000",mono:true,show}),
+    F(p+"poczta","Poczta",{span:2,req:false,hint:"Jeśli inna niż miejscowość.",show}),
+  ];
+}
+const YN=[{v:"tak",l:"Tak"},{v:"nie",l:"Nie"}];
+
+const STEPS=[
+ {id:"rodzaj",title:"Rodzaj umowy",custom:true},
+ {id:"osoba",title:"Dane osobowe",lead:"Wpisz dane tak, jak w dowodzie osobistym.",fields:[
+   H("Imiona i nazwisko"),
+   F("nazwisko","Nazwisko",{span:2}),
+   F("imie1","Pierwsze imię",{span:2}),
+   F("imie2","Drugie imię",{span:2,req:false}),
+   F("nazw_rod","Nazwisko rodowe",{span:2,req:false,hint:"Jeśli inne niż obecne."}),
+   F("imie_ojca","Imię ojca",{span:2}),
+   F("imie_matki","Imię matki",{span:2}),
+   H("Urodzenie i obywatelstwo"),
+   F("pesel","PESEL",{mono:true,v:V.pesel,ph:"11 cyfr",inputmode:"numeric",max:11}),
+   F("data_ur","Data urodzenia",{type:"date",span:3,hint:"Uzupełni się z numeru PESEL."}),
+   F("miejsce_ur","Miejsce urodzenia",{span:3}),
+   F("obyw","Obywatelstwo",{span:3}),
+   F("karta","Nr karty stałego pobytu",{span:3,show:()=>(d.obyw||"").trim().toLowerCase().replace(/[^a-ząćęłńóśźż]/g,"")!=="polskie"&&(d.obyw||"").trim()!=="",hint:"Dotyczy obcokrajowców."}),
+   F("nip","NIP",{span:3,req:false,mono:true,v:V.nip,hint:"Tylko jeśli masz NIP, np. prowadzisz działalność."}),
+   H("Kontakt"),
+   F("email","E-mail",{type:"email",v:V.email,hint:"Wyślemy tu kopię zgłoszenia w PDF."}),
+   F("tel","Telefon",{type:"tel",v:V.tel,req:false}),
+ ]},
+ {id:"adres",title:"Adres",fields:[
+   H("Adres zamieszkania"),
+   ...addr("",()=>true),
+   F("inny_koresp","Adres do korespondencji jest inny niż adres zamieszkania",{type:"check",req:false,span:6}),
+   H("Adres do korespondencji"),
+   ...addr("k_",()=>!!d.inny_koresp),
+ ]},
+ {id:"podatki",title:"Urząd, NFZ i konto",fields:[
+   F("us","Urząd skarbowy",{type:"combo",src:"us",pref:"",span:6,ph:"Wpisz nazwę miasta, np. Kraków",hint:"Właściwy dla adresu zamieszkania. Na górze listy pokazujemy urzędy pasujące do Twojego adresu."}),
+   F("nfz","Oddział Narodowego Funduszu Zdrowia",{type:"select",options:NFZ,span:6,hint:"Podpowiadamy na podstawie województwa. Zmień, jeśli jest inaczej."}),
+   F("iban","Numer rachunku bankowego",{span:6,mono:true,v:V.iban,ph:"00 0000 0000 0000 0000 0000 0000",inputmode:"numeric",hint:"Wpisz lub wklej same cyfry. Odstępy dodadzą się same. Na ten rachunek trafi wynagrodzenie."}),
+   F("zatr_zam","Czy jesteś jednocześnie zatrudniony/a na umowę o pracę w firmie Eskander?",{type:"radio",options:YN,row:true,span:6,show:()=>!Z(),tag:"propozycja",hint:"Jeśli tak, umowa o dzieło podlega składkom ZUS jak umowa o pracę."}),
+ ]},
+ {id:"zus",title:"Oświadczenie ZUS",only:"zlecenie",lead:"Zaznacz wszystko, co Cię dotyczy. Jeśli nic nie pasuje, nie zaznaczaj nic.",fields:[
+   {type:"q",id:"q1",label:"Jestem jednocześnie zatrudniony/a na podstawie umowy o pracę lub równorzędnej",sub:[
+     F("q1_kw","Moje wynagrodzenie brutto z umowy o pracę wynosi",{type:"radio",span:6,options:[{v:"min",l:"co najmniej minimalne wynagrodzenie"},{v:"mniej",l:"mniej niż minimalne wynagrodzenie"}]})]},
+   {type:"q",id:"q2",label:"Jestem już ubezpieczony/a (emerytalnie i rentowo) jako osoba wykonująca pracę nakładczą, umowę zlecenia lub agencyjną"},
+   {type:"q",id:"q3",label:"Jestem już ubezpieczony/a (emerytalnie i rentowo) z innego tytułu, np. działalność gospodarcza, KRUS",sub:[
+     F("q3_tyt","Podaj tytuł",{span:6,ph:"np. działalność gospodarcza"})]},
+   {type:"q",id:"q4",label:"Jestem emerytem lub rencistą",sub:[
+     F("q4_typ","Jestem",{type:"radio",row:true,span:6,options:[{v:"emeryt",l:"emerytem"},{v:"rencista",l:"rencistą"}]}),
+     F("q4_insp","ZUS Inspektorat nr",{span:2}),F("q4_sied","z siedzibą w",{span:4}),
+     F("q4_ul","ulica",{span:4}),F("q4_nr","nr",{span:2})]},
+   {type:"q",id:"q5",label:"Mam ustalone prawo do emerytury (renty) mundurowej: żołnierzy zawodowych lub funkcjonariuszy Policji",sub:[
+     F("q5_nr","Nr świadczenia",{span:3}),F("q5_org","Organ wypłacający",{span:3})]},
+   {type:"q",id:"q6",label:"Posiadam orzeczenie o niepełnosprawności",sub:[
+     F("q6_st","Stopień",{type:"select",span:3,options:["lekki","umiarkowany","znaczny"]})]},
+   {type:"q",id:"q7",label:"Jestem uczniem szkoły ponadpodstawowej lub studentem i nie ukończyłem/am 26 lat"},
+   {type:"q",id:"q8",label:"Nie pracuję, nie jestem zarejestrowany/a jako bezrobotny/a i nie mam ubezpieczenia społecznego z żadnego tytułu"},
+   {type:"q",id:"q9",label:"Jestem zarejestrowany/a jako bezrobotny/a w Powiatowym Urzędzie Pracy",sub:[
+     F("q9_pup","PUP w",{span:4,ph:"np. Krakowie"})]},
+   H("Ubezpieczenia z tytułu tej umowy"),
+   {type:"sugg"},
+   F("ubezp","Zgodnie z powyższym oświadczeniem z tytułu tej umowy:",{type:"radio",span:6,options:[
+     {v:"obow",l:"Podlegam obowiązkowemu ubezpieczeniu emerytalnemu i rentowemu"},
+     {v:"dobr_tak",l:"Chcę podlegać dobrowolnemu ubezpieczeniu emerytalnemu i rentowemu"},
+     {v:"dobr_nie",l:"Nie chcę podlegać dobrowolnemu ubezpieczeniu emerytalnemu i rentowemu"},
+     {v:"nie",l:"Nie podlegam ubezpieczeniu emerytalnemu i rentowemu"}]}),
+   F("chor","Dobrowolne ubezpieczenie chorobowe",{type:"radio",row:true,span:6,show:()=>d.ubezp==="obow",options:[{v:"chce",l:"chcę być objęty/a"},{v:"nie_chce",l:"nie chcę być objęty/a"}],hint:"Daje prawo do zasiłku chorobowego. Składkę potrąca się z wynagrodzenia."}),
+ ]},
+ {id:"pit2",title:"PIT-2",only:"zlecenie",lead:"PIT-2 to oświadczenie dla celów obliczania zaliczek na podatek. Wypełniasz tylko te części, których chcesz użyć. Dane osobowe przeniesiemy z poprzednich kroków.",fields:[
+   N(`<p>Płatnik (część B, poz. 5): <b>${esc(PLATNIK)}</b></p>`,{cls:"accent"}),
+   F("pit","Czy chcesz złożyć PIT-2?",{type:"radio",row:true,span:6,options:[{v:"tak",l:"Tak, składam PIT-2"},{v:"nie",l:"Nie składam"}]}),
+   H("Kwota zmniejszająca podatek","część C · poz. 6–7"),
+   F("c6","Wnoszę o pomniejszanie miesięcznej zaliczki o",{type:"radio",span:6,show:()=>d.pit==="tak",req:false,options:[
+     {v:"12",l:"1/12 kwoty zmniejszającej podatek (300 zł)",h:"Najczęstszy wybór, jeśli to Twój jedyny płatnik, który ją stosuje."},
+     {v:"24",l:"1/24 kwoty (150 zł)",h:"Gdy dzielisz kwotę między dwóch płatników."},
+     {v:"36",l:"1/36 kwoty (100 zł)",h:"Gdy dzielisz kwotę między trzech płatników."}]}),
+   F("c7","Wycofuję uprzednio złożone oświadczenie (poz. 7)",{type:"check",req:false,span:6,show:()=>d.pit==="tak"}),
+   H("Zwolnienia z PIT","część G · poz. 14–15"),
+   F("g_powrot","Ulga na powrót (art. 21 ust. 1 pkt 152)",{type:"check",req:false,span:6,show:()=>d.pit==="tak"}),
+   F("g_od","stosować od roku",{type:"number",span:2,v:V.rok,show:()=>d.pit==="tak"&&d.g_powrot}),
+   F("g_do","do roku",{type:"number",span:2,v:V.rok,show:()=>d.pit==="tak"&&d.g_powrot}),
+   F("g_4plus","Ulga dla rodzin 4+ (art. 21 ust. 1 pkt 153)",{type:"check",req:false,span:6,show:()=>d.pit==="tak"}),
+   F("g_senior","Ulga dla pracujących seniorów (art. 21 ust. 1 pkt 154)",{type:"check",req:false,span:6,show:()=>d.pit==="tak"}),
+   F("g15","Wycofuję uprzednio złożone oświadczenie (poz. 15)",{type:"check",req:false,span:6,show:()=>d.pit==="tak"}),
+   H("Ulga dla młodych i koszty","część H · poz. 16–17"),
+   F("h16_m","Proszę o obliczanie zaliczek bez ulgi dla młodych",{type:"check",req:false,span:6,show:()=>d.pit==="tak",hint:"Zaznacz, jeśli spodziewasz się przekroczyć limit ulgi (85 528 zł rocznie)."}),
+   F("h16_k","Proszę o obliczanie zaliczek bez pracowniczych kosztów uzyskania przychodów",{type:"check",req:false,span:6,show:()=>d.pit==="tak"}),
+   F("h17_m","Wycofuję wniosek w zakresie ulgi dla młodych (poz. 17)",{type:"check",req:false,span:3,show:()=>d.pit==="tak"}),
+   F("h17_k","Wycofuję wniosek w zakresie kosztów (poz. 17)",{type:"check",req:false,span:3,show:()=>d.pit==="tak"}),
+   H("Koszty 50%","część I · poz. 18–19"),
+   F("i18","Wnioskuję o niestosowanie 50% kosztów uzyskania przychodów",{type:"check",req:false,span:6,show:()=>d.pit==="tak"}),
+   F("i19","Wycofuję uprzednio złożony wniosek (poz. 19)",{type:"check",req:false,span:6,show:()=>d.pit==="tak"}),
+   H("Niepobieranie zaliczek","część J · poz. 20–21"),
+   F("j20","Wnioskuję o niepobieranie zaliczek, bo moje dochody w tym roku nie przekroczą 30 000 zł",{type:"check",req:false,span:6,show:()=>d.pit==="tak"}),
+   F("j20_rok","w roku",{type:"number",span:2,v:V.rok,show:()=>d.pit==="tak"&&d.j20}),
+   F("j21","Wycofuję uprzednio złożony wniosek (poz. 21)",{type:"check",req:false,span:6,show:()=>d.pit==="tak"}),
+ ]},
+ {id:"ppk",title:"PPK",only:"zlecenie",lead:"Zleceniobiorcy objęci ubezpieczeniem emerytalnym są zapisywani do Pracowniczych Planów Kapitałowych. Możesz z nich zrezygnować.",fields:[
+   N("<p>Z tej umowy nie podlegasz ubezpieczeniu emerytalnemu, więc PPK Cię nie dotyczy. Przejdź dalej.</p>",{show:()=>d.ubezp==="nie"||d.ubezp==="dobr_nie"}),
+   F("ppk","Czy rezygnujesz z dokonywania wpłat do PPK?",{type:"radio",span:6,show:()=>!(d.ubezp==="nie"||d.ubezp==="dobr_nie"),options:[
+     {v:"tak",l:"Tak, rezygnuję z wpłat do PPK",h:"Przygotujemy deklarację o rezygnacji do podpisu."},
+     {v:"nie",l:"Nie, chcę oszczędzać w PPK"}]}),
+   N(`<p><b>Rezygnując, nie otrzymasz:</b></p><ol><li>wpłaty powitalnej 250 zł,</li><li>dopłat rocznych 240 zł,</li><li>wpłat podstawowych od podmiotu zatrudniającego w wysokości 1,5% wynagrodzenia.</li></ol>`,{cls:"warn",show:()=>d.ppk==="tak"&&!(d.ubezp==="nie"||d.ubezp==="dobr_nie")}),
+   F("dokument","Seria i numer dowodu osobistego lub paszportu",{span:3,mono:true,show:()=>d.ppk==="tak"&&!(d.ubezp==="nie"||d.ubezp==="dobr_nie"),hint:"Wymagane w deklaracji PPK."}),
+   F("ppk_ok","Oświadczam, że rezygnuję z wpłat do PPK i znam konsekwencje złożenia deklaracji",{type:"check",span:6,show:()=>d.ppk==="tak"&&!(d.ubezp==="nie"||d.ubezp==="dobr_nie")}),
+ ]},
+ {id:"podpis",title:"Sprawdź i podpisz",lead:"Sprawdź dane. Jeśli coś się nie zgadza, kliknij „Popraw” przy danej sekcji.",fields:[
+   {type:"summary"},
+   H("Oświadczenia"),
+   F("o_prawda","Oświadczam, że wszystkie informacje są zgodne ze stanem faktycznym i prawnym, a odpowiedzialność karna za podanie informacji niezgodnych z prawdą lub ich zatajenie jest mi znana.",{type:"check",span:6}),
+   F("o_zmiany","Zobowiązuję się niezwłocznie poinformować Zleceniodawcę o wszelkich zmianach dotyczących treści oświadczenia.",{type:"check",span:6}),
+   F("o_upow","Upoważniam Zleceniodawcę do zgłoszenia mnie do ubezpieczenia zdrowotnego i/lub społecznego, o ile umowa podlega tym ubezpieczeniom.",{type:"check",span:6,show:Z}),
+   F("o_rodo","Zapoznałem/am się z klauzulą informacyjną o przetwarzaniu danych osobowych (RODO).",{type:"check",span:6}),
+   {type:"rodo"},
+   {type:"sig",id:"podpis",label:"Podpis"},
+ ]},
+];
+const ALLQ=STEPS.flatMap(s=>(s.fields||[]).flatMap(f=>f.type==="q"?[f,...(f.sub||[])]:[f]));
+const qFor=id=>ALLQ.find(f=>f.type==="q"&&f.sub&&f.sub.some(s=>s.id===id));
+const visible=f=>{ const q=qFor(f.id); if(q&&!d[q.id]) return false; return !f.show||!!f.show(); };
+const stepsActive=()=>STEPS.filter(s=>!s.only||s.only===d.rodzaj);
+
+/* ---------- stan ---------- */
+const KEY="eskander-makieta-v1";
+let cur=0, maxSeen=0, done=null;
+function load(){ try{ const r=localStorage.getItem(KEY); if(r){const o=JSON.parse(r); d=o.d||{}; cur=o.cur||0; maxSeen=o.maxSeen||0;} }catch(e){} }
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify({d,cur,maxSeen})); }catch(e){} }
+load();
+if(window.claude?.hot){ try{ window.claude.hot.snapshot?.(()=>({d,cur,maxSeen,done})); const h=window.claude.hot.data; if(h&&h.d){d=h.d;cur=h.cur;maxSeen=h.maxSeen;done=h.done;} }catch(e){} }
+if(!d.obyw) d.obyw="polskie";
+
+/* ---------- render ---------- */
+function req(f){return f.req?'<span class="req" aria-hidden="true">*</span>':(f.span===1?'':'<span class="opt">(opcjonalnie)</span>')}
+function fieldHTML(f){
+  const vis=visible(f)?"":" hidden";
+  if(f.type==="h") return `<div class="hsec"${f.show&&!f.show()?" hidden":""}><h3>${esc(f.label)}</h3>${f.poz?`<span class="poz">${esc(f.poz)}</span>`:""}</div>`;
+  if(f.type==="note") return `<div class="note ${f.cls||""}" data-show="${f._i}"${f.show&&!f.show()?" hidden":""}>${f.html}</div>`;
+  if(f.type==="sugg") return `<div class="sugg" id="sugg"></div>`;
+  if(f.type==="summary") return `<div class="s6" style="grid-column:1/-1">${summaryHTML()}</div>`;
+  if(f.type==="rodo") return `<details class="rodo"><summary>Pokaż klauzulę RODO</summary><p>Administratorem danych jest ${esc(PLATNIK)}. Dane są przetwarzane w celu zawarcia i realizacji umowy oraz wypełnienia obowiązków podatkowych i ubezpieczeniowych. <b>Treść klauzuli dostarczy Eskander / Aston.</b></p></details>`;
+  if(f.type==="sig") return `<div class="f sig" data-f="podpis"><div class="sigrow"><label id="sigl">Podpis<span class="req">*</span></label><button type="button" class="btn ghost sm" id="sigClear">Wyczyść podpis</button></div>
+    <div class="sigbox"><canvas id="sigCanvas" aria-labelledby="sigl"></canvas><div class="ph">Podpisz się palcem lub myszką</div></div>
+    <p class="hint">Podpis zostanie wstawiony do oświadczenia${Z()?", PIT-2 i deklaracji PPK":""}.</p><p class="err" id="e_podpis"></p></div>`;
+  if(f.type==="q"){
+    const sub=(f.sub||[]).map(fieldHTML).join("");
+    return `<div class="q s6" data-f="${f.id}"><label class="opt-card"><input type="checkbox" data-id="${f.id}" ${d[f.id]?"checked":""}><span class="t">${esc(f.label)}</span></label>${sub?`<div class="sub"${d[f.id]?"":" hidden"} data-sub="${f.id}">${sub}</div>`:""}</div>`;
+  }
+  const id="f_"+f.id, val=d[f.id]??"";
+  const top=`<div class="f s${f.span}" data-f="${f.id}"${vis}>`;
+  const hint=f.hint?`<p class="hint">${esc(f.hint)}</p>`:"";
+  const err=`<p class="err" id="e_${f.id}"></p>`;
+  const tag=f.tag?`<span class="tag">${esc(f.tag)}</span>`:"";
+  if(f.type==="check"){
+    return `${top}<label class="opt-card"><input type="checkbox" id="${id}" data-id="${f.id}" ${val?"checked":""}><span class="t">${esc(f.label)}${f.req?'<span class="req">*</span>':""}</span></label>${hint}${err}</div>`;
+  }
+  if(f.type==="radio"){
+    const opts=f.options.map(o=>`<label class="opt-card"><input type="radio" name="${id}" data-id="${f.id}" value="${esc(o.v)}" ${val===o.v?"checked":""}><span><span class="t">${esc(o.l)}</span>${o.h?`<small>${esc(o.h)}</small>`:""}</span></label>`).join("");
+    return `${top}<fieldset><legend>${esc(f.label)}${req(f)}${tag}</legend><div class="radios${f.row?" row":""}" style="margin-top:6px">${opts}</div></fieldset>${hint}${err}</div>`;
+  }
+  if(f.type==="combo"){
+    return `${top}<label for="${id}">${esc(f.label)}${req(f)}</label><div class="cbw"><input type="text" id="${id}" data-id="${f.id}" data-combo="${f.src}" data-pref="${f.pref}" value="${esc(val)}" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="lb_${f.id}" autocomplete="off"${f.ph?` placeholder="${esc(f.ph)}"`:""}><button type="button" class="cbt" tabindex="-1" aria-hidden="true" data-open="${f.id}">▼</button><ul class="lb" role="listbox" id="lb_${f.id}" hidden></ul></div>${hint}${err}</div>`;
+  }
+  if(f.id==="iban"){
+    const n=String(val).replace(/\D/g,"").length;
+    return `${top}<div class="lrow"><label for="${id}">${esc(f.label)}${req(f)}</label><span class="cnt" id="cnt_iban">${n}/26 cyfr</span></div><input type="text" id="${id}" data-id="iban" value="${esc(val?fmtIban(val):"")}" class="mono" placeholder="${esc(f.ph)}" inputmode="numeric" autocomplete="off">${hint}${err}</div>`;
+  }
+  if(f.type==="select"){
+    const opts=`<option value="">— wybierz —</option>`+f.options.map(o=>`<option ${val===o?"selected":""}>${esc(o)}</option>`).join("");
+    return `${top}<label for="${id}">${esc(f.label)}${req(f)}</label><select id="${id}" data-id="${f.id}">${opts}</select>${hint}${err}</div>`;
+  }
+  const ro=(f.id==="data_ur"&&!d.brak_pesel&&peselInfo(d.pesel||""))||(f.id==="pesel"&&d.brak_pesel)?" readonly":"";
+  if(f.id==="pesel"){
+    return `${top}<label for="${id}">${esc(f.label)}${req(f)}</label><input type="text" id="${id}" data-id="pesel" value="${esc(d.brak_pesel?"":val)}" class="mono" placeholder="${d.brak_pesel?"brak numeru PESEL":"11 cyfr"}" inputmode="numeric" maxlength="11" autocomplete="off"${ro}><label class="inl"><input type="checkbox" id="f_brak_pesel" data-id="brak_pesel" ${d.brak_pesel?"checked":""}> Nie mam numeru PESEL</label>${err}</div>`;
+  }
+  const t=f.type==="number"?"text":f.type;
+  return `${top}<label for="${id}">${esc(f.label)}${req(f)}${tag}</label><input type="${t}" id="${id}" data-id="${f.id}" value="${esc(val)}"${f.mono?' class="mono"':""}${f.ph?` placeholder="${esc(f.ph)}"`:""}${f.list?` list="${f.list}"`:""}${f.type==="number"||f.inputmode?' inputmode="numeric"':""}${f.max?` maxlength="${f.max}"`:""}${ro} autocomplete="off">${hint}${err}</div>`;
+}
+
+function renderNav(){
+  const st=stepsActive();
+  $("#stepList").innerHTML=st.map((s,i)=>`<li class="${i===cur&&!done?"cur":""} ${i<maxSeen||done?"done":""}"><button type="button" data-go="${i}" ${(i<=maxSeen&&!done)?"":"disabled"}><span class="n">${i<maxSeen||done?"✓":i+1}</span>${esc(s.title)}</button></li>`).join("");
+  const pct=done?100:Math.round(cur/st.length*100);
+  $("#mprog").innerHTML=done?"":`<p>Krok <b>${cur+1}</b> z ${st.length} · ${esc(st[cur].title)}</p><div class="bar"><i style="width:${Math.max(pct,4)}%"></i></div>`;
+}
+
+function render(){
+  const st=stepsActive(); if(cur>=st.length) cur=st.length-1;
+  renderNav();
+  if(done){ $("#view").innerHTML=doneHTML(); bindDone(); return; }
+  const s=st[cur];
+  let h=`<h2>${esc(s.title)}</h2>${s.lead?`<p class="lead">${esc(s.lead)}</p>`:'<div style="height:18px"></div>'}`;
+  if(s.custom){
+    h=`<h2>Jaką umowę zawierasz?</h2><p class="lead">Od tego zależy, jakie dane będą potrzebne. Jeśli nie wiesz, zapytaj osobę, która przesłała Ci link.</p>
+    <div class="kinds">
+      <button type="button" class="kind ${d.rodzaj==="zlecenie"?"sel":""}" data-kind="zlecenie" aria-pressed="${d.rodzaj==="zlecenie"}"><span class="code">ZL</span><h3>Umowa zlecenia</h3><ul><li>dane osobowe i adres</li><li>oświadczenie do ZUS</li><li>PIT-2 (opcjonalnie)</li><li>rezygnacja z PPK (opcjonalnie)</li></ul></button>
+      <button type="button" class="kind ${d.rodzaj==="dzielo"?"sel":""}" data-kind="dzielo" aria-pressed="${d.rodzaj==="dzielo"}"><span class="code">DZ</span><h3>Umowa o dzieło</h3><ul><li>dane osobowe i adres</li><li>urząd skarbowy i konto</li><li>bez ZUS, PIT-2 i PPK</li></ul></button>
+    </div><p class="err" id="e_rodzaj" style="margin-top:10px"></p>
+    <p class="hint" style="margin-top:14px">Wypełnienie zajmuje około ${"5–8"} minut. Przygotuj dowód osobisty i numer konta.</p>`;
+  } else {
+    s.fields.forEach((f,i)=>f._i=s.id+i);
+    h+=`<div class="grid">${s.fields.map(fieldHTML).join("")}</div>`;
+  }
+  const last=cur===st.length-1;
+  h+=`<div class="actions"><button type="button" class="btn" id="back" ${cur===0?"hidden":""}>Wstecz</button><span></span><button type="button" class="btn primary" id="next">${last?"Prześlij zgłoszenie":"Dalej"}</button></div>`;
+  $("#view").innerHTML=h;
+  if(!s.custom) refresh();
+  if(s.id==="podpis") initSig();
+}
+
+/* ---------- odświeżanie widoczności ---------- */
+function refresh(){
+  const s=stepsActive()[cur]; if(!s||!s.fields) return;
+  for(const f of ALLQ){
+    if(!f.id) continue;
+    const el=document.querySelector(`[data-f="${f.id}"]`);
+    if(el&&f.type!=="q"&&f.type!=="sig") el.hidden=!visible(f);
+    if(f.type==="q"){ const sb=document.querySelector(`[data-sub="${f.id}"]`); if(sb) sb.hidden=!d[f.id]; }
+  }
+  s.fields.forEach(f=>{ if(f.type==="note"&&f.show){ const el=document.querySelector(`[data-show="${f._i}"]`); if(el) el.hidden=!f.show(); }});
+  const hs=[...document.querySelectorAll(".hsec")];
+  s.fields.filter(f=>f.type==="h").forEach((f,i)=>{ if(hs[i]){ const idx=s.fields.indexOf(f); const nxt=s.fields.slice(idx+1); const end=nxt.findIndex(x=>x.type==="h"); const grp=end<0?nxt:nxt.slice(0,end); hs[i].hidden=grp.length>0&&grp.every(x=>x.show&&!x.show()); }});
+  if(s.id==="zus") updSugg();
+}
+
+/* ---------- podpowiedź ZUS ---------- */
+function updSugg(){
+  const el=$("#sugg"); if(!el) return;
+  let t="", key="";
+  const a=age(d.data_ur);
+  if(d.q7){ key="nie"; t="Jako uczeń lub student przed 26. rokiem życia z tej umowy <b>nie podlegasz</b> ubezpieczeniu emerytalnemu i rentowemu."; }
+  else if(d.q1&&d.q1_kw==="min"){ t="Masz umowę o pracę z co najmniej minimalnym wynagrodzeniem, więc ubezpieczenie emerytalne i rentowe z tej umowy jest <b>dobrowolne</b>. Wybierz, czy chcesz mu podlegać."; }
+  else if(d.q2||d.q3||d.q5){ t="Twoja sytuacja zależy od szczegółów, np. wysokości przychodu z innej umowy. Wybierz odpowiedź, a Dział Kadr ją zweryfikuje."; }
+  else if(d.q1&&d.q1_kw==="mniej"||d.q4||d.q8||d.q9){ key="obow"; t="Na podstawie odpowiedzi z tej umowy <b>podlegasz obowiązkowo</b> ubezpieczeniu emerytalnemu i rentowemu."; }
+  else { key="obow"; t="Nie zaznaczono żadnej sytuacji, więc z tej umowy zwykle <b>podlegasz obowiązkowo</b> ubezpieczeniu emerytalnemu i rentowemu."; }
+  const warn=d.q7&&a!==null&&a>=26?`<p style="color:var(--err)"><b>Uwaga:</b> z daty urodzenia wynika, że masz ${a} lat. Zwolnienie dla studentów dotyczy osób przed 26. rokiem życia.</p>`:"";
+  el.innerHTML=`<div class="note accent"><p><b>Podpowiedź:</b> ${t}</p>${key&&d.ubezp!==key?`<p><button type="button" class="btn sm" data-apply="${key}">Zaznacz tę odpowiedź</button></p>`:""}${warn}<p class="hint">Ostateczną decyzję potwierdza Dział Kadr.</p></div>`;
+}
+
+/* ---------- walidacja ---------- */
+function setErr(id,msg){ const e=document.getElementById("e_"+id); if(e) e.textContent=msg||""; const w=document.querySelector(`[data-f="${id}"]`); if(w) w.classList.toggle("bad",!!msg); }
+function checkField(f){
+  if(f.id==="pesel"&&d.brak_pesel) return "";
+  if(!f.id||["h","note","sugg","summary","rodo","q"].includes(f.type)) return "";
+  if(!visible(f)) return "";
+  const v=d[f.id];
+  if(f.type==="sig") return d.podpis?"":"Złóż podpis w ramce powyżej.";
+  if(f.type==="check") return f.req&&!v?"To pole jest wymagane.":"";
+  const empty=v===undefined||v===null||String(v).trim()==="";
+  if(empty) return f.req?(f.type==="radio"||f.type==="select"?"Wybierz jedną z opcji.":"Uzupełnij to pole."):"";
+  if(f.type==="combo"){ const vals=comboValues(f); if(vals&&!vals.includes(v)) return "Wybierz pozycję z listy."; }
+  return f.v?f.v(String(v)):"";
+}
+function stepFields(s){ return (s.fields||[]).flatMap(f=>f.type==="q"?(f.sub||[]):[f]); }
+function validateStep(s){
+  if(s.custom){ if(!d.rodzaj){ $("#e_rodzaj").textContent="Wybierz rodzaj umowy."; return false;} return true; }
+  if(skipVal){ stepFields(s).forEach(f=>f.id&&setErr(f.id,"")); return true; }
+  let first=null;
+  for(const f of stepFields(s)){ const m=checkField(f); if(f.id) setErr(f.id,m); if(m&&!first) first=f; }
+  if(s.id==="zus"&&d.q7){ const a=age(d.data_ur); if(a!==null&&a>=26){ first=first||{id:"q7"}; } }
+  if(s.id==="pit2"&&d.pit==="tak"){
+    const any=["c6","c7","g_powrot","g_4plus","g_senior","g15","h16_m","h16_k","h17_m","h17_k","i18","i19","j20","j21"].some(k=>d[k]);
+    if(!any){ setErr("pit","Zaznacz przynajmniej jedną opcję poniżej albo wybierz „Nie składam”."); first=first||{id:"pit"}; }
+  }
+  if(first){ const w=document.querySelector(`[data-f="${first.id}"]`); if(w){ w.scrollIntoView({behavior:"smooth",block:"center"}); const inp=w.querySelector("input,select"); inp&&inp.focus({preventScroll:true}); } return false; }
+  return true;
+}
+
+/* ---------- podsumowanie ---------- */
+function valText(f){
+  const v=d[f.id];
+  if(f.type==="check") return v?"Tak":"";
+  if(f.type==="radio"){ const o=f.options.find(o=>o.v===v); return o?o.l:""; }
+  if(f.id==="iban"&&v) return fmtIban(v);
+  if(f.id==="pesel"&&d.brak_pesel) return "brak numeru PESEL";
+  return v??"";
+}
+function rows(s){
+  const out=[];
+  for(const f of s.fields||[]){
+    if(f.type==="q"){ if(d[f.id]){ out.push([f.label,"Tak"]); (f.sub||[]).forEach(sf=>{const t=valText(sf); if(t) out.push(["  "+sf.label,t]);}); } continue; }
+    if(!f.id||!visible(f)||["sig"].includes(f.type)) continue;
+    if(s.id==="podpis") continue;
+    const t=valText(f); if(t!=="") out.push([f.label,t]);
+  }
+  return out;
+}
+function summaryHTML(){
+  const st=stepsActive();
+  return `<div class="sum">`+st.slice(1,-1).map((s,i)=>{
+    const r=rows(s);
+    if(s.id==="zus"&&!r.some(x=>x[0].startsWith("Jestem")||x[0].startsWith("Mam")||x[0].startsWith("Nie")||x[0].startsWith("Posiadam"))) r.unshift(["Sytuacja","Żadna z wymienionych"]);
+    return `<section><div class="sh"><span>${esc(s.title)}</span><button type="button" class="btn ghost sm" data-go="${i+1}">Popraw</button></div><dl>${r.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join("")||"<dt>—</dt><dd>brak danych</dd>"}</dl></section>`;
+  }).join("")+`</div>`;
+}
+
+/* ---------- podpis ---------- */
+function initSig(){
+  const c=$("#sigCanvas"); if(!c) return;
+  const box=c.parentElement, dpr=window.devicePixelRatio||1;
+  const size=()=>{ const r=box.getBoundingClientRect(); c.width=r.width*dpr; c.height=r.height*dpr; const x=c.getContext("2d"); x.setTransform(dpr,0,0,dpr,0,0); x.lineWidth=2.2; x.lineCap="round"; x.lineJoin="round"; x.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue("--ink").trim()||"#14325c";
+    if(d.podpis){ const im=new Image(); im.onload=()=>x.drawImage(im,0,0,r.width,r.height); im.src=d.podpis; } };
+  size();
+  const ctx=c.getContext("2d"); let drawing=false,last=null;
+  const pt=e=>{const r=c.getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top};};
+  c.addEventListener("pointerdown",e=>{drawing=true;last=pt(e);c.setPointerCapture(e.pointerId);box.querySelector(".ph").style.opacity=.35;});
+  c.addEventListener("pointermove",e=>{ if(!drawing) return; const p=pt(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p; });
+  const end=()=>{ if(!drawing) return; drawing=false; sigToData(c); };
+  c.addEventListener("pointerup",end); c.addEventListener("pointercancel",end);
+  $("#sigClear").addEventListener("click",()=>{ ctx.clearRect(0,0,c.width,c.height); d.podpis=""; save(); });
+}
+function sigToData(c){
+  // zapis podpisu zawsze granatowym tuszem na przezroczystym tle (do dokumentów)
+  const t=document.createElement("canvas"); t.width=c.width; t.height=c.height; const x=t.getContext("2d");
+  x.drawImage(c,0,0); x.globalCompositeOperation="source-in"; x.fillStyle="#14325c"; x.fillRect(0,0,t.width,t.height);
+  d.podpis=t.toDataURL("image/png"); setErr("podpis",""); save();
+}
+function drawSample(){
+  const t=document.createElement("canvas"); t.width=600; t.height=170; const x=t.getContext("2d");
+  x.strokeStyle="#14325c"; x.lineWidth=4; x.lineCap="round"; x.beginPath();
+  for(let i=0;i<=200;i++){ const tt=i/200; const X=60+tt*420; const Y=100+Math.sin(tt*18)*22*(1-tt*.4)-tt*20; i?x.lineTo(X,Y):x.moveTo(X,Y); }
+  x.stroke(); x.beginPath(); x.moveTo(70,128); x.quadraticCurveTo(300,112,520,124); x.stroke();
+  return t.toDataURL("image/png");
+}
+
+/* ---------- ekran po wysłaniu ---------- */
+let tab="mail";
+function docs(){
+  const n=`${d.nazwisko||"Nazwisko"}`.replace(/\s+/g,"_");
+  const a=[Z()?`Oswiadczenie_zleceniobiorcy_${n}.pdf`:`Oswiadczenie_wykonawcy_dziela_${n}.pdf`];
+  if(Z()&&d.pit==="tak") a.push(`PIT-2_${n}.pdf`);
+  if(Z()&&d.ppk==="tak"&&!(d.ubezp==="nie"||d.ubezp==="dobr_nie")) a.push(`PPK_rezygnacja_${n}.pdf`);
+  return a;
+}
+function doneHTML(){
+  return `<div class="done-head"><div class="check" aria-hidden="true">✓</div><div><h2>Zgłoszenie przesłane</h2><p class="lead" style="margin-bottom:0">Dziękujemy${d.imie1?", "+esc(d.imie1):""}. Twoje dane trafiły do działu kadr. Numer zgłoszenia: <b class="mono">${esc(done.nr)}</b>.</p></div></div>
+  <div class="note plain" style="margin-top:22px"><p>Zachowaj numer zgłoszenia. Jeśli coś się zmieni (adres, konto, ubezpieczenie), poinformuj nas lub wypełnij formularz ponownie.</p></div>
+  <div class="actions"><span></span><button type="button" class="btn" id="again">Wypełnij nowe zgłoszenie</button></div>`;
+}
+function tabHTML(who){
+  if(tab==="mail"){
+    const st=stepsActive().slice(1,-1);
+    const tbl=st.map(s=>{ const r=rows(s); return `<tr><td colspan="2" style="padding-top:12px;color:var(--fg);font-weight:600">${esc(s.title)}</td></tr>`+r.map(([a,b])=>`<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join(""); }).join("");
+    return `<div class="mail"><div class="mh"><div><b>Do:</b> ${esc(MAIL_ESK)}, ${esc(MAIL_ASTON)}</div><div><b>Od:</b> formularz@[domena]</div><div><b>Temat:</b> Nowe zgłoszenie: ${Z()?"umowa zlecenia":"umowa o dzieło"} — ${esc(who)} (${esc(done.nr)})</div></div>
+    <div class="mb"><p style="margin-top:0">Przesłano nowe zgłoszenie danych do umowy. Data: ${esc(done.data)}.</p><table>${tbl}</table>
+    <div class="att">${docs().map(x=>`<span>📎 ${esc(x)}</span>`).join("")}</div></div></div>`;
+  }
+  if(tab==="osw") return `<div class="paperwrap">${Z()?oswZL():oswDZ()}</div>`;
+  if(tab==="pit") return `<div class="paperwrap">${pitDoc()}</div>`;
+  if(tab==="ppk") return `<div class="paperwrap">${ppkDoc()}</div>`;
+  return "";
+}
+const fl=v=>`<span class="fl">${esc(v||"—")}</span>`;
+const bx=on=>`<span class="bx">${on?"☒":"☐"}</span>`;
+const sigImg=()=>d.podpis?`<img src="${d.podpis}" alt="podpis">`:"";
+function adresBlock(p){ return `<p>Województwo ${fl(d[p+"woj"])} Powiat ${fl(d[p+"powiat"])} Gmina ${fl(d[p+"gmina"])}</p><p>Ulica ${fl(d[p+"ulica"])} Nr domu ${fl(d[p+"nr_domu"])} Nr mieszkania ${fl(d[p+"nr_m"])}</p><p>Miejscowość ${fl(d[p+"miejscowosc"])} Kod pocztowy ${fl(d[p+"kod"])} Poczta ${fl(d[p+"poczta"])}</p>`; }
+function daneBlock(){ return `<h5>Dane osobowe</h5><p>Nazwisko ${fl(d.nazwisko)} Imiona 1) ${fl(d.imie1)} 2) ${fl(d.imie2)}</p><p>Imię ojca ${fl(d.imie_ojca)} Imię matki ${fl(d.imie_matki)}</p><p>Data urodzenia ${fl(d.data_ur)} Miejsce urodzenia ${fl(d.miejsce_ur)}</p><p>Nazwisko rodowe ${fl(d.nazw_rod)} Obywatelstwo ${fl(d.obyw)}</p><p>PESEL ${fl(d.brak_pesel?"brak":d.pesel)} NIP ${fl(d.nip)}</p>${d.karta?`<p>Nr karty stałego pobytu ${fl(d.karta)}</p>`:""}
+  <h5>Adres zamieszkania</h5>${adresBlock("")}${d.inny_koresp?`<h5>Adres do korespondencji</h5>${adresBlock("k_")}`:""}
+  <h5>Urząd Skarbowy</h5><p>${fl(d.us)}</p><p>Właściwy oddział NFZ: ${fl(d.nfz)}</p>`; }
+function sigLine(){ return `<div class="sigline"><div>${sigImg()}…………………………………………<br>${esc(done.data)} · data i podpis</div></div>`; }
+function oswZL(){
+  return `<div class="paper"><h4>Oświadczenie Zleceniobiorcy</h4>${daneBlock()}
+  <h5>Jako Wykonawca umowy oświadczam, że:</h5><ol>
+  <li>${bx(d.q1)} Jestem jednocześnie zatrudniona/y na podstawie umowy o pracę lub równorzędnej. Wynagrodzenie: ${bx(d.q1&&d.q1_kw==="min")} co najmniej minimalne ${bx(d.q1&&d.q1_kw==="mniej")} mniej niż minimalne</li>
+  <li>${bx(d.q2)} Jestem jednocześnie już ubezpieczona/y jako osoba wykonująca pracę nakładczą, umowę zlecenia lub agencyjną</li>
+  <li>${bx(d.q3)} Jestem już ubezpieczona/y z innych tytułów. Tytuł: ${fl(d.q3&&d.q3_tyt)}</li>
+  <li>${bx(d.q4)} Jestem: ${bx(d.q4&&d.q4_typ==="emeryt")} emerytem ${bx(d.q4&&d.q4_typ==="rencista")} rencistą. ZUS Inspektorat nr ${fl(d.q4&&d.q4_insp)} z siedzibą w ${fl(d.q4&&d.q4_sied)}, ul. ${fl(d.q4&&d.q4_ul)} nr ${fl(d.q4&&d.q4_nr)}</li>
+  <li>${bx(d.q5)} Mam ustalone prawo do emerytury (renty) mundurowej, nr świadczenia ${fl(d.q5&&d.q5_nr)} organ wypłacający ${fl(d.q5&&d.q5_org)}</li>
+  <li>${bx(d.q6)} Posiadam orzeczenie o niepełnosprawności, stopień ${fl(d.q6&&d.q6_st)}</li>
+  <li>${bx(d.q7)} Jestem uczniem szkoły ponadpodstawowej lub studentem i nie ukończyłam/em 26 lat</li>
+  <li>${bx(d.q8)} Nie pracuję, nie jestem zarejestrowana/y jako osoba bezrobotna i nie jestem objęta/y ubezpieczeniem społecznym z żadnego tytułu</li>
+  <li>${bx(d.q9)} Pozostaję w rejestrze bezrobotnych prowadzonym przez PUP w ${fl(d.q9&&d.q9_pup)}</li>
+  <li>Nr rachunku bankowego ${fl(d.iban&&fmtIban(d.iban))}</li></ol>
+  <h5>Zgodnie z powyższym oświadczeniem z tytułu wykonywania tej umowy:</h5><ol>
+  <li>${bx(d.ubezp==="obow")} Podlegam obowiązkowemu ubezpieczeniu emerytalnemu i rentowemu: ${bx(d.ubezp==="obow"&&d.chor==="chce")} chcę ${bx(d.ubezp==="obow"&&d.chor==="nie_chce")} nie chcę być objęta/y dobrowolnym ubezpieczeniem chorobowym</li>
+  <li>${bx(d.ubezp==="dobr_tak")} Chcę podlegać dobrowolnemu ubezpieczeniu emerytalnemu i rentowemu</li>
+  <li>${bx(d.ubezp==="dobr_nie")} Nie chcę podlegać dobrowolnemu ubezpieczeniu emerytalnemu i rentowemu</li>
+  <li>${bx(d.ubezp==="nie")} Nie podlegam ubezpieczeniu emerytalnemu i rentowemu</li></ol>
+  <p class="small" style="margin-top:10px">Oświadczam, iż wszystkie informacje są zgodne ze stanem faktycznym i prawnym, a odpowiedzialność karna za podanie informacji niezgodnych z prawdą lub ich zatajenie jest mi znana. Zobowiązuję się do niezwłocznego poinformowania Zleceniodawcy o wszelkich zmianach dotyczących treści niniejszego oświadczenia oraz przejmuję odpowiedzialność z tytułu niedotrzymania powyższego zobowiązania. Upoważniam Zleceniodawcę do dokonania w moim imieniu zgłoszenia do ubezpieczenia zdrowotnego i/lub społecznego, o ile wykonywanie przeze mnie umowy zlecenia podlegać będzie tym ubezpieczeniom zgodnie z obowiązującymi przepisami prawnymi.</p>
+  ${sigLine()}</div>`;
+}
+function oswDZ(){
+  return `<div class="paper"><h4>Oświadczenie Wykonawcy<br><span style="font-size:13px;font-weight:400">(umowa o dzieło)</span></h4>${daneBlock()}
+  <p>Nr rachunku bankowego ${fl(d.iban&&fmtIban(d.iban))}</p>
+  <p>Zatrudnienie na umowę o pracę u Zamawiającego: ${bx(d.zatr_zam==="tak")} tak ${bx(d.zatr_zam==="nie")} nie</p>
+  <p class="small" style="margin-top:10px">Oświadczam, iż wszystkie informacje są zgodne ze stanem faktycznym i prawnym, a odpowiedzialność karna za podanie informacji niezgodnych z prawdą lub ich zatajenie jest mi znana. Zobowiązuję się do niezwłocznego poinformowania Zamawiającego o wszelkich zmianach dotyczących treści niniejszego oświadczenia.</p>
+  <p class="small" style="color:#8a5300">Wzór roboczy przygotowany na podstawie oświadczenia Zleceniobiorcy. Do akceptacji przez Aston.</p>
+  ${sigLine()}</div>`;
+}
+function pitDoc(){
+  const idn=d.brak_pesel?(d.nip||""):(d.pesel||"");
+  const L=(poz,on,t)=>`<p>${bx(on)} <b>poz. ${poz}</b> ${t}</p>`;
+  return `<div class="paper"><h4>PIT-2 · dane naniesione na oryginalny wzór</h4>
+  <p class="small" style="color:#666">W prawdziwym PDF dane zostaną wpisane w kratki oryginalnego formularza PIT-2 (wersja 9). Tu jest ich lista.</p>
+  <h5>Nagłówek i część A</h5><p>1. NIP / PESEL ${fl(idn)}</p><p>2. Nazwisko ${fl((d.nazwisko||"").toUpperCase())} 3. Pierwsze imię ${fl((d.imie1||"").toUpperCase())} 4. Data urodzenia ${fl(d.data_ur)}</p>
+  <h5>Część B</h5><p>5. Nazwa pełna płatnika ${fl(PLATNIK)}</p>
+  <h5>Część C</h5>${L(6,d.c6==="12","1/12 (300 zł)")}${L(6,d.c6==="24","1/24 (150 zł)")}${L(6,d.c6==="36","1/36 (100 zł)")}${L(7,d.c7,"wycofuję uprzednio złożone oświadczenie")}
+  <h5>Część G</h5>${L(14,d.g_powrot,`ulga na powrót, lata od ${fl(d.g_od)} do ${fl(d.g_do)}`)}${L(14,d.g_4plus,"ulga dla rodzin 4+")}${L(14,d.g_senior,"ulga dla pracujących seniorów")}${L(15,d.g15,"wycofuję")}
+  <h5>Część H</h5>${L(16,d.h16_m,"bez ulgi dla młodych")}${L(16,d.h16_k,"bez pracowniczych KUP")}${L(17,d.h17_m,"wycofuję: ulga dla młodych")}${L(17,d.h17_k,"wycofuję: KUP")}
+  <h5>Części I i J</h5>${L(18,d.i18,"niestosowanie 50% KUP")}${L(19,d.i19,"wycofuję")}${L(20,d.j20,`niepobieranie zaliczek w roku ${fl(d.j20_rok)}`)}${L(21,d.j21,"wycofuję")}
+  <h5>Część K</h5><p>22. Data wypełnienia ${fl(done.data)}</p>${sigLine()}</div>`;
+}
+function ppkDoc(){
+  return `<div class="paper"><h4>DEKLARACJA O REZYGNACJI Z DOKONYWANIA WPŁAT<br>DO PRACOWNICZYCH PLANÓW KAPITAŁOWYCH (PPK)</h4>
+  <h5>1. Dane dotyczące uczestnika PPK</h5><p>Imię (imiona) ${fl([d.imie1,d.imie2].filter(Boolean).join(" ").toUpperCase())}</p><p>Nazwisko ${fl((d.nazwisko||"").toUpperCase())}</p><p>PESEL / data urodzenia ${fl(d.brak_pesel?d.data_ur:d.pesel)}</p><p>Seria i numer dokumentu ${fl((d.dokument||"").toUpperCase())}</p>
+  <h5>2. Nazwa podmiotu zatrudniającego</h5><p>${fl(PLATNIK)}</p>
+  <h5>3. Oświadczenie uczestnika PPK</h5><p class="small">Oświadczam, że rezygnuję z dokonywania wpłat do PPK oraz posiadam wiedzę o konsekwencjach złożenia niniejszej deklaracji, w tym: 1) nieotrzymania wpłaty powitalnej w wysokości 250 zł; 2) nieotrzymania dopłat rocznych do PPK w wysokości 240 zł; 3) nieotrzymania wpłat podstawowych finansowanych przez podmiot zatrudniający w wysokości 1,5% wynagrodzenia.</p>
+  ${sigLine()}</div>`;
+}
+function bindDone(){}
+
+/* ---------- lista z wyszukiwaniem (combobox) ---------- */
+const CB={input:null,opts:[],active:-1};
+function comboData(inp){ return SRC[inp.dataset.combo](inp.dataset.pref||""); }
+function comboValues(f){ const r=SRC[f.src](f.pref||""); return r.items?r.items.map(x=>x.v):r.groups?r.groups.flatMap(g=>g.items.map(x=>x.v)):null; }
+function hl(text,q){ if(!q) return esc(text); const i=norm(text).indexOf(q); if(i<0) return esc(text); return esc(text.slice(0,i))+"<mark>"+esc(text.slice(i,i+q.length))+"</mark>"+esc(text.slice(i+q.length)); }
+function rank(items,q){
+  if(!q) return items;
+  const a=[],b=[];
+  for(const x of items){ const n=norm(x.v); if(n.startsWith(q)||n.split(/[\s-]/).some(w=>w.startsWith(q))) a.push(x); else if(n.includes(q)||(x.c&&x.c.startsWith(q))) b.push(x); }
+  return a.concat(b);
+}
+function openCombo(inp,showAll){
+  const lb=document.getElementById(inp.getAttribute("aria-controls"));
+  const r=comboData(inp); const q=showAll?"":norm(inp.value.trim());
+  CB.input=inp; CB.opts=[]; CB.active=-1;
+  let html="", LIMIT=120;
+  if(r.empty){ html=`<li class="empty" role="presentation">${esc(r.empty)}</li>`; }
+  else {
+    const groups=r.groups||[{label:"",items:r.items}];
+    for(const g of groups){
+      const its=rank(g.items,q); if(!its.length) continue;
+      if(g.label&&r.groups) html+=`<li class="grp" role="presentation">${esc(g.label)}</li>`;
+      for(const x of its){ if(CB.opts.length>=LIMIT) break; const i=CB.opts.length; CB.opts.push(x);
+        html+=`<li role="option" id="${lb.id}_${i}" data-i="${i}" aria-selected="false"><span>${hl(x.v,q)}</span>${x.sub?`<small>${esc(x.sub)}</small>`:""}</li>`; }
+    }
+    if(!CB.opts.length) html=`<li class="empty" role="presentation">Brak wyników dla „${esc(inp.value)}”. Sprawdź pisownię.</li>`;
+    else if(CB.opts.length>=LIMIT) html+=`<li class="empty" role="presentation">Wpisz więcej liter, aby zawęzić listę.</li>`;
+  }
+  lb.innerHTML=html; lb.hidden=false; inp.setAttribute("aria-expanded","true");
+  if(q&&CB.opts.length) setActive(0);
+}
+function closeCombo(){ if(!CB.input) return; const lb=document.getElementById(CB.input.getAttribute("aria-controls")); if(lb) lb.hidden=true; CB.input.setAttribute("aria-expanded","false"); CB.input.removeAttribute("aria-activedescendant"); CB.input=null; CB.active=-1; }
+function setActive(i){
+  const inp=CB.input; if(!inp) return; const lb=document.getElementById(inp.getAttribute("aria-controls"));
+  lb.querySelectorAll('[aria-selected="true"]').forEach(e=>e.setAttribute("aria-selected","false"));
+  CB.active=i; const li=document.getElementById(`${lb.id}_${i}`);
+  if(li){ li.setAttribute("aria-selected","true"); inp.setAttribute("aria-activedescendant",li.id); li.scrollIntoView({block:"nearest"}); }
+}
+function pickCombo(i){
+  const inp=CB.input, x=CB.opts[i]; if(!inp||!x) return;
+  inp.value=x.v; setComboValue(inp.dataset.id,x.v); closeCombo(); setErr(inp.dataset.id,"");
+}
+function setComboValue(id,v){
+  const old=d[id]; d[id]=v;
+  if(old!==v){
+    if(/powiat$/.test(id)){ const p=id.replace("powiat",""); d[p+"gmina"]=""; const g=document.getElementById("f_"+p+"gmina"); if(g) g.value=""; }
+  }
+  refresh(); save();
+}
+function comboBlur(inp){
+  // przy wyjściu z pola: dokładne dopasowanie albo jedyny wynik → wybierz; w innym wypadku zostaw tekst (walidacja poprosi o wybór z listy)
+  const f=ALLQ.find(x=>x.id===inp.dataset.id); const vals=comboValues(f)||[]; const t=inp.value.trim();
+  const exact=vals.find(v=>norm(v)===norm(t));
+  if(exact){ inp.value=exact; setComboValue(f.id,exact); }
+  else if(t){ const r=rank(vals.map(v=>({v})),norm(t)); if(r.length===1){ inp.value=r[0].v; setComboValue(f.id,r[0].v); } else { d[f.id]=t; save(); } }
+  else { setComboValue(f.id,""); }
+  closeCombo();
+}
+document.addEventListener("keydown",e=>{
+  const inp=e.target; if(!inp.dataset||!inp.dataset.combo) return;
+  if(e.key==="ArrowDown"){ e.preventDefault(); if(!CB.input) openCombo(inp,!inp.value); else setActive(Math.min(CB.active+1,CB.opts.length-1)); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); if(CB.input) setActive(Math.max(CB.active-1,0)); }
+  else if(e.key==="Enter"){ if(CB.input&&CB.active>=0){ e.preventDefault(); pickCombo(CB.active); } }
+  else if(e.key==="Escape"){ if(CB.input){ e.preventDefault(); closeCombo(); } }
+});
+document.addEventListener("mousedown",e=>{
+  const li=e.target.closest(".lb li[data-i]"); if(li){ e.preventDefault(); pickCombo(+li.dataset.i); return; }
+  const ob=e.target.closest("[data-open]"); if(ob){ e.preventDefault(); const inp=document.getElementById("f_"+ob.dataset.open); if(CB.input===inp) closeCombo(); else { inp.focus(); openCombo(inp,true); } }
+});
+document.addEventListener("focusin",e=>{ if(e.target.dataset&&e.target.dataset.combo) openCombo(e.target,true); });
+
+/* ---------- zdarzenia ---------- */
+function onInput(e){
+  const el=e.target, id=el.dataset&&el.dataset.id; if(!id) return;
+  if(el.type==="checkbox") d[id]=el.checked;
+  else if(el.type==="radio"){ if(el.checked) d[id]=el.value; }
+  else d[id]=el.value;
+  if(el.dataset.combo){ if(e.type==="input") openCombo(el,false); save(); return; }
+  if(id==="iban"&&e.type==="input"){
+    const pos=el.selectionStart||0, before=el.value.slice(0,pos).replace(/\D/g,"").length;
+    let digits=el.value.replace(/^\s*PL/i,"").replace(/\D/g,"").slice(0,26);
+    const f=fmtIban(digits); el.value=f; d.iban=f;
+    let k=0,c=0; while(c<f.length&&k<before){ if(/\d/.test(f[c])) k++; c++; }
+    try{ el.setSelectionRange(c,c); }catch(_){}
+    const cn=$("#cnt_iban"); if(cn) cn.textContent=`${digits.length}/26 cyfr`;
+  }
+  if(/(^|_)woj$/.test(id)&&e.type==="change"){
+    const p=id.replace("woj",""); d[p+"powiat"]=""; d[p+"gmina"]="";
+    ["powiat","gmina"].forEach(k=>{ const i=document.getElementById("f_"+p+k); if(i) i.value=""; setErr(p+k,""); });
+    if(!p) d.nfz=NFZ[WOJ.indexOf(el.value)]||d.nfz;
+  }
+  if(id==="pesel"){ const v=el.value.replace(/\D/g,""); if(v!==el.value) el.value=v; d.pesel=v; const pi=peselInfo(v); const du=$("#f_data_ur"); if(pi&&du){ d.data_ur=pi.iso; du.value=pi.iso; du.readOnly=true; setErr("data_ur",""); } else if(du){ du.readOnly=false; } }
+  if(id==="brak_pesel"){ const du=$("#f_data_ur"); if(du) du.readOnly=false; const pi=$("#f_pesel"); if(pi){ pi.readOnly=d.brak_pesel; pi.placeholder=d.brak_pesel?"brak numeru PESEL":"11 cyfr"; if(d.brak_pesel){ pi.value=""; d.pesel=""; } } setErr("pesel",""); }
+  if(id==="kod"){ const v=el.value.replace(/[^\d]/g,""); if(v.length>=3&&!el.value.includes("-")){ el.value=v.slice(0,2)+"-"+v.slice(2,5); d.kod=el.value; } }
+  if(id==="pit"&&el.value==="nie") setErr("pit","");
+  if(e.type==="change"||el.type==="checkbox"||el.type==="radio"){ const f=ALLQ.find(x=>x.id===id); if(f&&f.type!=="q"){ const w=document.querySelector(`[data-f="${id}"]`); if(w&&w.classList.contains("bad")) setErr(id,checkField(f)); } }
+  else { const w=document.querySelector(`[data-f="${id}"]`); if(w&&w.classList.contains("bad")){ const f=ALLQ.find(x=>x.id===id); f&&setErr(id,checkField(f)); } }
+  refresh(); save();
+}
+document.addEventListener("input",onInput);
+document.addEventListener("change",onInput);
+document.addEventListener("focusout",e=>{ const goingToActions=(e.relatedTarget&&e.relatedTarget.closest&&e.relatedTarget.closest(".actions,nav.steps"))||document.querySelector(".actions:hover,nav.steps:hover"); const id=e.target.dataset&&e.target.dataset.id; if(goingToActions){ if(id&&e.target.dataset.combo) comboBlur(e.target); return; } if(id&&e.target.dataset.combo){ comboBlur(e.target); const f=ALLQ.find(x=>x.id===id); if(f&&String(d[id]??"").trim()!=="") setErr(id,checkField(f)); return; } if(!id||e.target.type==="checkbox"||e.target.type==="radio") return; const f=ALLQ.find(x=>x.id===id); if(f&&String(d[id]??"").trim()!=="") setErr(id,checkField(f)); });
+document.addEventListener("click",e=>{
+  const k=e.target.closest("[data-kind]");
+  if(k){ d.rodzaj=k.dataset.kind; save(); render(); return; }
+  const g=e.target.closest("[data-go]");
+  if(g&&!g.disabled){ done=null; cur=+g.dataset.go; save(); render(); window.scrollTo({top:0,behavior:"smooth"}); return; }
+  const ap=e.target.closest("[data-apply]");
+  if(ap){ d.ubezp=ap.dataset.apply; save(); render(); return; }
+  const tb=e.target.closest("[data-tab]");
+  if(tb){ tab=tb.dataset.tab; $("#view").innerHTML=doneHTML(); return; }
+  if(e.target.id==="next"){ const st=stepsActive(); const s=st[cur]; if(!validateStep(s)) return;
+    if(cur===st.length-1){ submit(); return; }
+    cur++; maxSeen=Math.max(maxSeen,cur); save(); render(); window.scrollTo({top:0,behavior:"smooth"}); return; }
+  if(e.target.id==="back"){ cur=Math.max(0,cur-1); save(); render(); window.scrollTo({top:0,behavior:"smooth"}); return; }
+  if(e.target.id==="edit"){ done=null; cur=stepsActive().length-1; render(); return; }
+  if(e.target.id==="again"){ resetAll(); return; }
+});
+const FORM_ENDPOINT="https://formsubmit.co/ajax/igortok777@gmail.com";
+let sending=false;
+function payload(nr,data){
+  const o={};
+  o._subject=`Nowe zgłoszenie: ${Z()?"umowa zlecenia":"umowa o dzieło"} — ${(d.nazwisko||"").trim()} ${(d.imie1||"").trim()} (${nr})`;
+  o._template="table"; o._captcha="false";
+  if(d.email&&!V.email(d.email)) o._replyto=d.email.trim();
+  o["Numer zgłoszenia"]=nr; o["Data"]=data;
+  o["Rodzaj umowy"]=Z()?"Umowa zlecenia":"Umowa o dzieło";
+  const used={};
+  for(const s of stepsActive().slice(1,-1)){
+    for(const [k,v] of rows(s)){
+      let key=`${s.title} · ${k.trim()}`; while(used[key]) key+=" ";
+      used[key]=1; o[key]=String(v);
+    }
+  }
+  const osw=["o_prawda","o_zmiany","o_upow","o_rodo"].filter(k=>d[k]).length;
+  o["Oświadczenia końcowe"]=`zaakceptowane (${osw})`;
+  o["Podpis"]=d.podpis?"złożony na ekranie (obraz podpisu w wersji docelowej trafi do PDF)":"brak";
+  o["Dokumenty do przygotowania"]=docs().join(", ");
+  return o;
+}
+async function submit(){
+  if(sending) return; sending=true;
+  const b=$("#next"); b.disabled=true; b.textContent="Wysyłanie…";
+  let box=$("#sendErr"); if(box) box.remove();
+  const now=new Date(); const p=n=>String(n).padStart(2,"0");
+  const nr=`${Z()?"ZL":"DZ"}-${now.getFullYear()}${p(now.getMonth()+1)}${p(now.getDate())}-${String(Math.floor(Math.random()*9000)+1000)}`;
+  const data=`${p(now.getDate())}.${p(now.getMonth()+1)}.${now.getFullYear()} ${p(now.getHours())}:${p(now.getMinutes())}`;
+  try{
+    const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),20000);
+    const r=await fetch(FORM_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(payload(nr,data)),signal:ctl.signal});
+    clearTimeout(t);
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||String(j.success)==="false") throw new Error(j.message||("HTTP "+r.status));
+    done={nr,data:data.slice(0,10),ok:true,msg:j.message||""};
+    const keepEmail=d.email, keepName=d.imie1;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    d={obyw:"polskie",email:keepEmail,imie1:keepName}; cur=0; maxSeen=stepsActive().length;
+    render(); window.scrollTo({top:0,behavior:"smooth"});
+  }catch(e){
+    b.disabled=false; b.textContent="Prześlij zgłoszenie";
+    const el=document.createElement("div"); el.id="sendErr"; el.className="note warn"; el.setAttribute("role","alert"); el.style.marginTop="14px";
+    el.innerHTML=`<p><b>Nie udało się wysłać zgłoszenia.</b> Sprawdź połączenie z internetem i kliknij „Prześlij zgłoszenie” jeszcze raz. Twoje dane są zapisane w tej przeglądarce.</p><p class="hint">Szczegóły: ${esc(e.name==="AbortError"?"przekroczono czas oczekiwania":e.message)}</p>`;
+    $(".actions").before(el);
+  }finally{ sending=false; }
+}
+function resetAll(){ d={obyw:"polskie"}; cur=0; maxSeen=0; done=null; try{localStorage.removeItem(KEY)}catch(e){} render(); }
+$("#reset").addEventListener("click",resetAll);
+const SAMPLE={obyw:"polskie",nazwisko:"Kowalska",imie1:"Anna",imie2:"Maria",nazw_rod:"",imie_ojca:"Jan",imie_matki:"Ewa",pesel:"03221504120",data_ur:"2003-02-15",miejsce_ur:"Kraków",email:"anna.kowalska@example.com",tel:"600 100 200",
+  woj:"małopolskie",powiat:"Kraków",gmina:"Kraków",ulica:"Długa",nr_domu:"12",nr_m:"4",miejscowosc:"Kraków",kod:"31-147",poczta:"Kraków",
+  us:"Urząd Skarbowy Kraków-Krowodrza",nfz:NFZ[5],iban:"61109010140000071219812874"};
+$("#demoZ").addEventListener("click",()=>{ d={...SAMPLE,rodzaj:"zlecenie",q7:true,ubezp:"nie",pit:"tak",c6:"12",o_prawda:true,o_zmiany:true,o_upow:true,o_rodo:true,podpis:drawSample()}; done=null; cur=stepsActive().length-1; maxSeen=cur; save(); render(); window.scrollTo({top:0}); });
+$("#demoD").addEventListener("click",()=>{ d={...SAMPLE,rodzaj:"dzielo",zatr_zam:"nie",o_prawda:true,o_zmiany:true,o_rodo:true,podpis:drawSample()}; done=null; cur=stepsActive().length-1; maxSeen=cur; save(); render(); window.scrollTo({top:0}); });
+let skipVal=false;
+if(TEST){ try{ const sv=localStorage.getItem("eskander-skip"); if(sv!==null) skipVal=sv==="1"; }catch(e){} }
+$("#skipVal").checked=skipVal;
+$("#skipVal").addEventListener("change",e=>{ skipVal=e.target.checked; try{localStorage.setItem("eskander-skip",skipVal?"1":"0")}catch(_){} });
+$("#vsw").addEventListener("click",e=>{ const b=e.target.closest("[data-variant]"); if(b){ setVariant(b.dataset.variant,true); } });
+render();
+fetch("dane/dane.json").then(r=>r.json()).then(j=>{ GEO=j; if(CB.input) openCombo(CB.input,!CB.input.value); }).catch(()=>{ GEO={w:WOJ.map(w=>[w,[]]),us:[]}; });
+})();
+</script>
+
+</body>
+</html>
