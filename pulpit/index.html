@@ -701,7 +701,19 @@ function vSubs(){
       :`<div class="empty"><p style="margin:0 0 10px">Brak zgłoszeń dla tych filtrów.</p><button class="btn sm" type="button" data-act="clearAll">Wyczyść filtry</button></div>`}
   </section>`;
 }
+function demoDrawer(s){
+  const p=person(s.p); const groups={}; (s.rows||[]).forEach(([sec,k,v])=>{ (groups[sec]=groups[sec]||[]).push([k,v]); });
+  return drawer(`<div><span class="mono" style="color:var(--muted);font-size:13px">${esc(s.nr)}</span><h2>${esc(p.n)}</h2><p>${esc(tplName(s.tpl))} · wysłano ${fmtD(s.date)} o ${esc(s.date.slice(11))}${s.inv?` · zaproszenie ${esc(s.inv)}`:""}</p></div>`,`
+    <div class="note"><b>Zgłoszenie wysłane z formularza</b> na GitHubie (pokaz). Dane widać tylko w tej przeglądarce. W wersji docelowej zgłoszenia trafią do bazy i zobaczy je cały zespół.</div>
+    <div><p class="sec-t">Etap</p><div class="statusbar">${pill(s.st)}
+      <select class="inp" id="stSel" style="width:auto" aria-label="Zmień etap">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${k===s.st?"selected":""}>${esc(v)}</option>`).join("")}</select>
+      <button class="btn sm primary" type="button" data-act="setStatus" data-nr="${s.nr}">Zmień status</button></div></div>
+    <div><p class="sec-t">Dokumenty (powstaną w wersji docelowej)</p><div class="files">${(s.files||[]).map(f=>`<div class="file"><span class="pdf">PDF</span><div><b>${esc(f)}</b><small>generowanie PDF i podpis w Autenti w wersji docelowej</small></div></div>`).join("")}</div></div>
+    ${Object.entries(groups).map(([sec,rows])=>`<div><p class="sec-t">${esc(sec)}</p><dl class="kv">${rows.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl></div>`).join("")||`<p style="color:var(--muted)">Formularz wysłano bez danych (tryb pokazowy).</p>`}
+    <div><button class="btn sm danger" type="button" data-act="demoDel" data-nr="${s.nr}">Usuń to zgłoszenie z pokazu</button></div>`);
+}
 function subDrawer(nr){
+  { const ds=SUBS.find(x=>x.nr===nr); if(ds&&ds.demo) return demoDrawer(ds); }
   const s=SUBS.find(x=>x.nr===nr), p=person(s.p);
   const hist=[["Zgłoszenie wysłane przez "+p.n,s.date],["Mail z PDF-ami do księgowości i do "+p.n,s.date]];
   if(s.st!=="nowe") hist.push(["Status: W weryfikacji (Dział Kadr)",s.date.slice(0,10)+" 12:10"]);
@@ -767,7 +779,7 @@ function vPeople(){
   <section class="card"><div class="toolbar"><div class="search">${ico("search")}<input id="pplQ" type="search" placeholder="Szukaj osoby" value="${esc(pplQ)}" aria-label="Szukaj w kartotece"></div>
     <span style="color:var(--muted);font-size:13px">${PEOPLE.length} osób · ${PEOPLE.reduce((a,p)=>a+p.flags.length,0)} alerty</span></div>
   <div class="people">${list.map(p=>`<button type="button" class="card person" data-person="${p.id}"><div class="top"><div class="av">${esc(ini(p.n))}</div><div><b>${esc(p.n)}</b><small>${esc(p.city)} · ${p.umowy} ${p.umowy===1?"umowa":p.umowy<5?"umowy":"umów"}</small></div></div>
-    <div class="meta">${p.student?`<span class="tag">Student</span>`:""}${p.emeryt?`<span class="tag">Emeryt</span>`:""}${!p.pesel?`<span class="tag">Obcokrajowiec</span>`:""}<span class="tag" style="background:var(--bg)">dane z ${fmtD(p.last)}</span></div>
+    <div class="meta">${p.student?`<span class="tag">Student</span>`:""}${p.emeryt?`<span class="tag">Emeryt</span>`:""}${!p.pesel&&!p.demo?`<span class="tag">Obcokrajowiec</span>`:""}${p.demo?`<span class="tag" style="background:var(--blush)">Z formularza (pokaz)</span>`:""}<span class="tag" style="background:var(--bg)">dane z ${fmtD(p.last)}</span></div>
     ${p.flags.map(f=>`<span class="flag ${f.l==="e"?"e":""}">${f.l==="e"?"!":"⏱"} ${esc(f.t)}</span>`).join("")}</button>`).join("")||`<div class="empty">Nikogo nie znaleziono.</div>`}</div></section>`;
 }
 function personDrawer(id){
@@ -775,7 +787,7 @@ function personDrawer(id){
   return drawer(`<div style="display:flex;gap:12px;align-items:center"><div class="av" style="width:46px;height:46px;font-size:15px">${esc(ini(p.n))}</div><div><h2>${esc(p.n)}</h2><p>${esc(p.em)}</p></div></div>`,`
     ${p.flags.length?`<div style="display:grid;gap:8px">${p.flags.map(f=>`<div class="note ${f.l==="e"?"":"w"}" style="${f.l==="e"?"background:var(--err-soft);color:var(--err)":""}"><b>${esc(f.t)}</b>${f.t.includes("26 lat")?"<br>Od tego dnia umowa zlecenia podlega składkom ZUS. Przypomnimy 30 dni wcześniej.":f.t.includes("Karta")?"<br>Poproś o nowy dokument przed końcem ważności.":f.t.includes("PIT-2")?"<br>Wyślij formularz PIT-2 na nowy rok.":""}</div>`).join("")}</div>`:""}
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary sm" type="button" data-act="invPerson" data-id="${p.id}">${ico("send")}Wyślij formularz (wstępnie wypełniony)</button><button class="btn sm" type="button" data-act="askUpdate">Poproś o aktualizację danych</button></div>
-    <div><p class="sec-t">Aktualne dane</p><dl class="kv"><dt>PESEL</dt><dd class="mono">${esc(maskPesel(p.pesel))}</dd><dt>Data urodzenia</dt><dd>${fmtD(p.ur)}</dd><dt>Miejscowość</dt><dd>${esc(p.city)}</dd><dt>Status</dt><dd>${p.student?"Student (do 26. r.ż.)":p.emeryt?"Emeryt":"—"}</dd><dt>Dane potwierdzone</dt><dd>${fmtD(p.last)}</dd></dl></div>
+    <div><p class="sec-t">Aktualne dane</p><dl class="kv"><dt>PESEL</dt><dd class="mono">${p.demo?"w zgłoszeniu":esc(maskPesel(p.pesel))}</dd><dt>Data urodzenia</dt><dd>${fmtD(p.ur)}</dd><dt>Miejscowość</dt><dd>${esc(p.city)}</dd><dt>Status</dt><dd>${p.student?"Student (do 26. r.ż.)":p.emeryt?"Emeryt":"—"}</dd><dt>Dane potwierdzone</dt><dd>${fmtD(p.last)}</dd></dl></div>
     <div><p class="sec-t">Zgłoszenia i umowy</p>${subs.length?`<div class="files">${subs.map(s=>`<div class="file" style="cursor:pointer" data-sub="${s.nr}"><span class="pdf">${s.files.length}</span><div><b>${esc(tplName(s.tpl))}</b><small class="mono">${esc(s.nr)} · ${fmtD(s.date)}</small></div>${pill(s.st)}</div>`).join("")}</div>`:`<p style="color:var(--muted)">Brak zgłoszeń w przykładowych danych.</p>`}</div>
     <div><p class="sec-t">Przechowywanie danych</p><p style="margin:0;font-size:13.5px;color:var(--muted)">Dane osobowe usuwane automatycznie 5 lat po końcu roku, w którym zakończyła się ostatnia umowa (do ustalenia z Działem Kadr).</p></div>`);
 }
@@ -931,7 +943,6 @@ document.addEventListener("submit",e=>{
   if(!n||!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){ err.hidden=false; err.textContent=!n?"Wpisz imię i nazwisko.":"Wpisz poprawny adres e-mail."; return; }
   const tpl=$("#invT").value, days=parseInt($("#invX").value,10);
   const tok=Array.from(crypto.getRandomValues(new Uint8Array(9)),b=>"abcdefghjkmnpqrstuvwxyz23456789"[b%31]).join("");
-  INV.unshift({id:"i"+Date.now(),n,em,tpl,sent:"2026-11-25",exp:days===7?"2026-12-02":days===30?"2026-12-25":"2026-12-09",st:"wyslane",rem:0,step:0});
   // link osobisty do formularza testowego na GitHub Pages (tylko dane nieczułe w adresie)
   const parts=n.split(/\s+/), imie=parts[0], nazw=parts.slice(1).join(" ");
   const nr="INV-"+tok.slice(0,6).toUpperCase();
@@ -940,8 +951,33 @@ document.addEventListener("submit",e=>{
   const msg=($("#invM").value||"").trim();
   const subject="Eskander: prośba o uzupełnienie danych do umowy";
   const body=`Dzień dobry ${imie},\n\nprosimy o uzupełnienie danych potrzebnych do przygotowania umowy (${tplName(tpl).toLowerCase()}). Formularz zajmuje ok. 5–8 minut, przygotuj dowód osobisty i numer konta:\n\n${url}\n\nLink jest ważny ${days} dni.${msg?"\n\n"+msg:""}\n\nDane są przesyłane szyfrowanym połączeniem i trafiają wyłącznie do działu kadr.\n\nPozdrawiamy,\nEskander`;
+  { const t=new Date(), z=x=>String(x).padStart(2,"0"), iso=d=>`${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`, ex=new Date(t.getTime()+days*864e5);
+    const inv={id:"i"+Date.now(),nr,n,em,tpl,sent:iso(t),exp:iso(ex),st:"wyslane",rem:0,step:0}; const arr=readLS(INV_KEY); arr.unshift(inv); writeLS(INV_KEY,arr.slice(0,30)); loadDemo(); }
   lastLink={n,em,url,subject,body,mailto:"mailto:"+encodeURIComponent(em)+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body)};
   render(); toast("Link gotowy. Otwórz go w poczcie i wyślij do "+n);
+});
+/* ---------- POKAZ: zgłoszenia z formularza i wysłane linki (pamięć tej przeglądarki) ---------- */
+const DEMO_KEY="eskander-demo-zgloszenia", INV_KEY="eskander-demo-zaproszenia";
+const readLS=k=>{ try{ return JSON.parse(localStorage.getItem(k)||"[]"); }catch(e){ return []; } };
+const writeLS=(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} };
+function loadDemo(){
+  for(let i=SUBS.length-1;i>=0;i--) if(SUBS[i].demo) SUBS.splice(i,1);
+  for(let i=PEOPLE.length-1;i>=0;i--) if(PEOPLE[i].demo) PEOPLE.splice(i,1);
+  for(let i=INV.length-1;i>=0;i--) if(INV[i].demo) INV.splice(i,1);
+  const subs=readLS(DEMO_KEY), invs=readLS(INV_KEY);
+  subs.slice().reverse().forEach(z=>{
+    const pid="d_"+z.nr, name=`${z.imie||""} ${z.nazwisko||""}`.trim()||"(bez imienia i nazwiska)";
+    PEOPLE.push({id:pid,n:name,em:z.email||"—",pesel:"",ur:"2000-01-01",city:z.miejscowosc||"—",umowy:1,last:z.date.slice(0,10),flags:[],demo:true});
+    SUBS.unshift({nr:z.nr,p:pid,tpl:z.rodzaj==="dzielo"?"dz":"zl",date:z.date,st:z.st||"nowe",files:z.docs||[],rows:z.rows||[],inv:z.inv||"",demo:true});
+  });
+  invs.slice().reverse().forEach(v=>{ const fill=subs.find(z=>z.inv&&z.inv===v.nr); INV.unshift({...v,demo:true,st:fill?"wypelnione":"wyslane",step:fill?8:0}); });
+}
+loadDemo();
+window.addEventListener("storage",e=>{ if(e.key===DEMO_KEY||e.key===INV_KEY){ loadDemo(); render(); toast("Nowe zgłoszenie z formularza"); } });
+document.addEventListener("click",e=>{
+  const a=e.target.closest("[data-act]"); if(!a) return;
+  if(a.dataset.act==="demoDel"){ writeLS(DEMO_KEY,readLS(DEMO_KEY).filter(z=>z.nr!==a.dataset.nr)); loadDemo(); closeDrawer(); render(); toast("Usunięto zgłoszenie z pokazu"); }
+  if(a.dataset.act==="setStatus"){ const arr=readLS(DEMO_KEY), z=arr.find(x=>x.nr===a.dataset.nr); if(z){ const s=SUBS.find(x=>x.nr===z.nr); if(s){ z.st=s.st; writeLS(DEMO_KEY,arr); } } }
 });
 render();
 })();

@@ -748,6 +748,7 @@ function docs(){
 function doneHTML(){
   return `<div class="done-head"><div class="check" aria-hidden="true">✓</div><div><h2>Zgłoszenie przesłane</h2><p class="lead" style="margin-bottom:0">Dziękujemy${d.imie1?", "+esc(d.imie1):""}. Twoje dane trafiły do działu kadr. Numer zgłoszenia: <b class="mono">${esc(done.nr)}</b>.</p></div></div>
   <div class="note plain" style="margin-top:22px"><p>Zachowaj numer zgłoszenia. Jeśli coś się zmieni (adres, konto, ubezpieczenie), poinformuj nas lub wypełnij formularz ponownie.</p></div>
+  <div class="note" style="margin-top:12px"><p><b>Pokaz:</b> to zgłoszenie widać teraz w pulpicie w tej przeglądarce. <a href="pulpit/#zgloszenia">Otwórz pulpit →</a></p></div>
   <div class="actions"><span></span><button type="button" class="btn" id="again">Wypełnij nowe zgłoszenie</button></div>`;
 }
 function tabHTML(who){
@@ -979,6 +980,12 @@ async function submit(){
     const j=await r.json().catch(()=>({}));
     if(!r.ok||String(j.success)==="false") throw new Error(j.message||("HTTP "+r.status));
     done={nr,data:data.slice(0,10),ok:true,msg:j.message||""};
+    // POKAZ: kopia zgłoszenia w pamięci tej przeglądarki, żeby pulpit (/pulpit/) mógł je pokazać
+    try{ const K="eskander-demo-zgloszenia"; const arr=JSON.parse(localStorage.getItem(K)||"[]"); const all=[];
+      for(const s of stepsActive().slice(1,-1)) for(const [a,v] of rows(s)) all.push([s.title,a.trim(),String(v)]);
+      const iso=`${now.getFullYear()}-${p(now.getMonth()+1)}-${p(now.getDate())} ${p(now.getHours())}:${p(now.getMinutes())}`;
+      arr.unshift({nr,date:iso,imie:(d.imie1||"").trim(),nazwisko:(d.nazwisko||"").trim(),email:(d.email||"").trim(),rodzaj:d.rodzaj,inv:d._inv||"",miejscowosc:(d.miejscowosc||"").trim(),docs:docs(),rows:all,st:"nowe"});
+      localStorage.setItem(K,JSON.stringify(arr.slice(0,30))); }catch(_){}
     const keepEmail=d.email, keepName=d.imie1;
     try{ localStorage.removeItem(KEY); }catch(e){}
     d={obyw:"polskie",email:keepEmail,imie1:keepName}; cur=0; maxSeen=stepsActive().length;
