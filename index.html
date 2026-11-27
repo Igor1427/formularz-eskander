@@ -267,7 +267,7 @@ details.rodo summary{cursor:pointer;color:var(--accent)}
       <div id="view"></div>
     </main>
   </div>
-  <p class="foot">Połączenie szyfrowane. Wersja robocza zapisuje się w tej przeglądarce, możesz wrócić później. Po wysłaniu zgłoszenia jest z niej usuwana.</p>
+  <p class="foot"><b>Wersja pokazowa: dane nie są sprawdzane, możesz wpisać cokolwiek.</b> Połączenie szyfrowane. Wersja robocza zapisuje się w tej przeglądarce, możesz wrócić później. Po wysłaniu zgłoszenia jest z niej usuwana.</p>
 </div>
 
 <script>
@@ -1001,7 +1001,7 @@ const SAMPLE={obyw:"polskie",nazwisko:"Kowalska",imie1:"Anna",imie2:"Maria",nazw
   us:"Urząd Skarbowy Kraków-Krowodrza",nfz:NFZ[5],iban:"61109010140000071219812874"};
 $("#demoZ").addEventListener("click",()=>{ d={_inv:d._inv,...SAMPLE,rodzaj:"zlecenie",q7:true,ubezp:"nie",pit:"tak",c6:"12",o_prawda:true,o_zmiany:true,o_upow:true,o_rodo:true,podpis:drawSample()}; done=null; cur=stepsActive().length-1; maxSeen=cur; save(); render(); window.scrollTo({top:0}); });
 $("#demoD").addEventListener("click",()=>{ d={_inv:d._inv,...SAMPLE,rodzaj:"dzielo",zatr_zam:"nie",o_prawda:true,o_zmiany:true,o_rodo:true,podpis:drawSample()}; done=null; cur=stepsActive().length-1; maxSeen=cur; save(); render(); window.scrollTo({top:0}); });
-let skipVal=false;
+let skipVal=true; // TRYB POKAZOWY: walidacja nie blokuje. Przed prawdziwym użyciem zmienić na false.
 if(TEST){ try{ const sv=localStorage.getItem("eskander-skip"); if(sv!==null) skipVal=sv==="1"; }catch(e){} }
 $("#skipVal").checked=skipVal;
 $("#skipVal").addEventListener("change",e=>{ skipVal=e.target.checked; try{localStorage.setItem("eskander-skip",skipVal?"1":"0")}catch(_){} });
