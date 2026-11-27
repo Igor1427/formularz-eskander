@@ -948,6 +948,9 @@ function payload(nr,data){
   o._template="table"; o._captcha="false";
   if(d.email&&!V.email(d.email)) o._replyto=d.email.trim();
   o["Numer zgłoszenia"]=nr; o["Data"]=data;
+  if(d._inv) o["Zaproszenie"]=d._inv;
+  if(d.email&&!V.email(d.email)){ o.email=d.email.trim();
+    o._autoresponse=`Dzień dobry${d.imie1?" "+d.imie1.trim():""},\n\ndziękujemy, otrzymaliśmy Twoje zgłoszenie nr ${nr} (${Z()?"umowa zlecenia":"umowa o dzieło"}). Dział kadr skontaktuje się z Tobą, jeśli będzie potrzebne uzupełnienie danych.\n\nTa wiadomość została wysłana automatycznie i nie zawiera Twoich danych osobowych.\n\nEskander`; }
   o["Rodzaj umowy"]=Z()?"Umowa zlecenia":"Umowa o dzieło";
   const used={};
   for(const s of stepsActive().slice(1,-1)){
@@ -996,13 +999,23 @@ $("#reset").addEventListener("click",resetAll);
 const SAMPLE={obyw:"polskie",nazwisko:"Kowalska",imie1:"Anna",imie2:"Maria",nazw_rod:"",imie_ojca:"Jan",imie_matki:"Ewa",pesel:"03221504120",data_ur:"2003-02-15",miejsce_ur:"Kraków",email:"anna.kowalska@example.com",tel:"600 100 200",
   woj:"małopolskie",powiat:"Kraków",gmina:"Kraków",ulica:"Długa",nr_domu:"12",nr_m:"4",miejscowosc:"Kraków",kod:"31-147",poczta:"Kraków",
   us:"Urząd Skarbowy Kraków-Krowodrza",nfz:NFZ[5],iban:"61109010140000071219812874"};
-$("#demoZ").addEventListener("click",()=>{ d={...SAMPLE,rodzaj:"zlecenie",q7:true,ubezp:"nie",pit:"tak",c6:"12",o_prawda:true,o_zmiany:true,o_upow:true,o_rodo:true,podpis:drawSample()}; done=null; cur=stepsActive().length-1; maxSeen=cur; save(); render(); window.scrollTo({top:0}); });
-$("#demoD").addEventListener("click",()=>{ d={...SAMPLE,rodzaj:"dzielo",zatr_zam:"nie",o_prawda:true,o_zmiany:true,o_rodo:true,podpis:drawSample()}; done=null; cur=stepsActive().length-1; maxSeen=cur; save(); render(); window.scrollTo({top:0}); });
+$("#demoZ").addEventListener("click",()=>{ d={_inv:d._inv,...SAMPLE,rodzaj:"zlecenie",q7:true,ubezp:"nie",pit:"tak",c6:"12",o_prawda:true,o_zmiany:true,o_upow:true,o_rodo:true,podpis:drawSample()}; done=null; cur=stepsActive().length-1; maxSeen=cur; save(); render(); window.scrollTo({top:0}); });
+$("#demoD").addEventListener("click",()=>{ d={_inv:d._inv,...SAMPLE,rodzaj:"dzielo",zatr_zam:"nie",o_prawda:true,o_zmiany:true,o_rodo:true,podpis:drawSample()}; done=null; cur=stepsActive().length-1; maxSeen=cur; save(); render(); window.scrollTo({top:0}); });
 let skipVal=false;
 if(TEST){ try{ const sv=localStorage.getItem("eskander-skip"); if(sv!==null) skipVal=sv==="1"; }catch(e){} }
 $("#skipVal").checked=skipVal;
 $("#skipVal").addEventListener("change",e=>{ skipVal=e.target.checked; try{localStorage.setItem("eskander-skip",skipVal?"1":"0")}catch(_){} });
 $("#vsw").addEventListener("click",e=>{ const b=e.target.closest("[data-variant]"); if(b){ setVariant(b.dataset.variant,true); } });
+(function personalLink(){
+  const q=new URLSearchParams(location.search); const g=k=>(q.get(k)||"").trim().slice(0,80);
+  const imie=g("imie"), nazw=g("nazwisko"), em=g("email"), um=g("umowa"), nr=g("nr").replace(/[^A-Za-z0-9-]/g,"");
+  if(!(imie||em||um||nr)) return;
+  if(nr&&d._inv!==nr){ d={obyw:"polskie"}; cur=0; maxSeen=0; done=null; }
+  if(imie) d.imie1=imie; if(nazw) d.nazwisko=nazw; if(em) d.email=em; if(nr) d._inv=nr;
+  if(um==="zlecenie"||um==="dzielo") d.rodzaj=um;
+  save();
+  if(imie){ const sub=document.querySelector(".brand p.sub"); if(sub) sub.textContent=`Dzień dobry, ${imie}. Ten formularz przygotowaliśmy dla Ciebie. Zajmie ok. 5–8 minut.`; }
+})();
 render();
 fetch("dane/dane.json").then(r=>r.json()).then(j=>{ GEO=j; if(CB.input) openCombo(CB.input,!CB.input.value); }).catch(()=>{ GEO={w:WOJ.map(w=>[w,[]]),us:[]}; });
 })();
