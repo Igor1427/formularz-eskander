@@ -370,12 +370,215 @@ body{transition:background-color .35s,color .35s}
   .nav a span.lab{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ===== iteracja 8: sprawy umów, kolejka, weryfikacja ===== */
+:root{--action:#1E6B6E;--action-hover:#175759;--action-fg:#FFFFFF;--action-soft:#E4F1F1}
+.btn.action{background:var(--action);border-color:var(--action);color:var(--action-fg)}
+.btn.action:hover{background:var(--action-hover);border-color:var(--action-hover)}
+.btn.action:disabled{background:#C9D3D3;border-color:#C9D3D3;color:#4A5555;opacity:1}
+.btn.big{padding:12px 20px;font-size:15px}
+:focus-visible{outline:2px solid var(--action);outline-offset:2px}
+.btn:focus-visible,.chip:focus-visible,.nav a:focus-visible{outline:3px solid var(--action);outline-offset:2px}
+.btn.action:focus-visible{outline-color:var(--fg)}
+.demo-tag{display:inline-block;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;background:var(--warn-soft);color:var(--warn);border-radius:99px;padding:1px 7px;margin-left:2px;vertical-align:1px}
+.btn.action .demo-tag{background:rgba(255,255,255,.2);color:inherit}
+.sub{display:block;color:var(--muted);font-size:12.5px;font-weight:500}
+/* status: zawsze ikona + słowo, kolor tylko wspiera */
+.sbadge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap;border:1px solid transparent}
+.sbadge .si{font-size:12px;line-height:1;width:14px;text-align:center}
+.t-muted{background:#EEF1F1;color:#4F5A5A}
+.t-info{background:var(--info-soft);color:var(--info)}
+.t-warn{background:var(--warn-soft);color:var(--warn)}
+.t-err{background:var(--err-soft);color:var(--err)}
+.t-ok{background:var(--ok-soft);color:var(--ok)}
+.t-act{background:var(--action-soft);color:var(--action);border-color:color-mix(in srgb,var(--action) 35%,transparent)}
+/* nagłówek pulpitu */
+.dash-h{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+.dash-h h1{font-size:clamp(28px,3.2vw,38px)}
+.dash-actions{display:flex;gap:6px 12px;align-items:center;flex-wrap:wrap}
+/* obszar roboczy: kolejka + szczegóły */
+.ws{display:grid;grid-template-columns:minmax(320px,.95fr) minmax(0,1.25fr);gap:20px;align-items:start}
+.qtools{display:flex;gap:8px;margin-bottom:14px}
+.qtools .search input{background:var(--surface)}
+.qtools select{width:auto;flex:none;border-radius:99px}
+.qsec{margin-bottom:18px}
+.qsec h2,.qdone summary{font-family:var(--f-body);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;margin:0 0 8px}
+.qn{background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:0 8px;font-size:12px;letter-spacing:0;color:var(--fg)}
+.qdone summary{cursor:pointer;list-style:none;padding:6px 0}
+.qdone summary::-webkit-details-marker{display:none}
+.qdone summary::before{content:"▸";font-size:11px;transition:transform .15s}
+.qdone[open] summary::before{transform:rotate(90deg)}
+.qlist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.qrow{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:12px 14px 12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);position:relative;transition:border-color .15s,box-shadow .15s,background-color .15s}
+.qrow::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--line2)}
+.qrow.tone-err::before{background:var(--err)}.qrow.tone-warn::before{background:var(--warn)}.qrow.tone-act::before{background:var(--action)}.qrow.tone-info::before{background:var(--info)}.qrow.tone-ok::before{background:var(--ok)}
+.qrow:hover{border-color:var(--line2)}
+.qrow[aria-current="true"]{border-color:var(--action);box-shadow:inset 0 0 0 1px var(--action)}
+.qrow:focus-visible{outline:3px solid var(--action);outline-offset:2px}
+.qmain{display:grid;gap:2px;min-width:0}
+.qmain b{font-size:15.5px;font-weight:700}
+.qhint{font-size:13.5px;color:var(--fg)}
+.qmeta{font-size:12px;color:var(--muted)}
+.qrow .sbadge{flex:none;margin-top:1px}
+.qstate{background:var(--surface);border:1px dashed var(--line2);border-radius:var(--r);padding:22px 20px;text-align:center;display:grid;gap:8px;justify-items:center}
+.qstate p{margin:0;color:var(--muted);font-size:14px;max-width:42ch}
+.qstate.calm{border-style:solid}
+.qbtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.qempty{margin:0;color:var(--muted);font-size:13.5px;padding:4px 2px}
+/* szczegóły sprawy */
+.dcol{position:sticky;top:16px}
+.detail{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px;display:grid;gap:16px}
+.dempty{background:var(--surface);border:1px dashed var(--line2);border-radius:var(--r);padding:40px 24px;text-align:center;color:var(--muted)}
+.dempty b{color:var(--fg);display:block;margin-bottom:4px}
+.dhead{display:grid;gap:6px;justify-items:start}
+.dnr{font-size:12.5px;color:var(--muted);font-weight:600}
+.dhead h2{font-size:clamp(24px,2.4vw,30px)}
+.dnext{background:var(--bg);border-radius:var(--rs);padding:14px 16px;display:grid;gap:10px}
+.dnext-l{margin:0;font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.dnext-t{margin:0;font-size:16px;font-weight:600;line-height:1.4}
+.dact{display:grid;gap:10px;justify-items:start}
+.dsecbtn{display:flex;flex-wrap:wrap;gap:4px 6px;margin-left:-8px}
+.noact{margin:0;font-size:13.5px;color:var(--muted)}
+.dchg{margin:0;font-size:13.5px;color:var(--muted)}
+.dchg b{color:var(--fg);font-weight:600}
+.dsec h3{font-family:var(--f-body);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:0 0 8px}
+.facts{display:grid;grid-template-columns:130px minmax(0,1fr);gap:8px 14px;margin:0;font-size:14px}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0;overflow-wrap:anywhere}
+.miss-t{color:var(--err);font-weight:700}
+.sgn{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.sgn li{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.sgn small{display:block;color:var(--muted);font-size:12.5px}
+.sgn-st{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.sgn-st.ok{background:var(--ok-soft);color:var(--ok)}.sgn-st.wait{background:var(--bg);color:var(--muted);border:1px dashed var(--line2)}.sgn-st.err{background:var(--err-soft);color:var(--err)}
+.callout{background:var(--accent-soft);border-radius:var(--rs);padding:12px 14px;font-size:14px;line-height:1.5}
+.callout.err{background:var(--err-soft);color:#7A1A14}
+.callout.warn{background:var(--warn-soft);color:#5E3D00}
+.callout.ok{background:var(--ok-soft);color:#1F5A3C}
+.callout ol{margin:6px 0 0;padding-left:20px}
+.back{justify-self:start;margin:-6px 0 0 -8px}
+/* lista wszystkich umów */
+.stchips{display:flex;flex-wrap:wrap;gap:6px;padding:14px 18px 0}
+.stchip{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;border:1px solid var(--line2);font-size:13px;background:var(--surface)}
+.stchip .n{background:var(--bg);border-radius:99px;padding:0 7px;font-size:12px;color:var(--muted)}
+.stchip[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:#fff;font-weight:700}
+.stchip[aria-pressed="true"] .n{background:rgba(255,255,255,.2);color:#fff}
+.stchip:focus-visible{outline:3px solid var(--action);outline-offset:2px}
+tbody tr[data-open]:focus-visible{outline:3px solid var(--action);outline-offset:-3px}
+/* weryfikacja */
+.vhead{display:grid;gap:10px;margin-bottom:16px;justify-items:start}
+.vhead h1{font-size:clamp(26px,3vw,34px)}
+.vgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+.vleft{display:grid;gap:14px;min-width:0}
+.vright{position:sticky;top:16px;min-width:0}
+.vtabs{display:none}
+.vsum{border-radius:var(--rs);padding:12px 14px;font-size:14px}
+.vsum.bad{background:var(--err-soft);color:#7A1A14}
+.vsum.ok{background:var(--ok-soft);color:#1F5A3C}
+.vsum.chg{background:var(--warn-soft);color:#5E3D00;margin-top:8px}
+.vsum ul{margin:6px 0 0;padding-left:18px;display:grid;gap:3px}
+.vsum a{color:inherit;font-weight:700}
+.vfirm{font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rs);padding:10px 14px}
+.vsec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+.vsec h2{font-size:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.vb{font-family:var(--f-body);font-size:12px;font-weight:700;border-radius:99px;padding:2px 9px}
+.vb.ok{background:var(--ok-soft);color:var(--ok)}.vb.bad{background:var(--err-soft);color:var(--err)}
+.vfields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 14px}
+.vf{display:grid;gap:5px;align-content:start}
+.vf.wide{grid-column:1/-1}
+.vf label{font-size:13.5px;font-weight:600;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.req{color:var(--err)}
+.chg{font-size:11px;font-weight:700;background:var(--warn-soft);color:var(--warn);border-radius:99px;padding:0 7px}
+.vf.bad .inp{border-color:var(--err);background:#FFFBFA}
+.ferr{margin:0;min-height:18px;font-size:12.5px;color:var(--err);font-weight:600}
+.paper{background:#fff;border:1px solid var(--line);border-radius:var(--rs);padding:26px 28px;box-shadow:0 18px 40px -28px rgba(0,0,0,.35);font-family:Georgia,"Times New Roman",serif;font-size:14px;line-height:1.6;color:#1b1b1b}
+.paper h4{font-family:inherit;text-align:center;font-size:16px;letter-spacing:.04em;margin:0 0 14px}
+.paper h5{font-family:inherit;font-size:14px;margin:14px 0 4px}
+.paper p{margin:0 0 6px}
+.ctpl{font-family:var(--f-body);font-size:12px;color:var(--muted);border-bottom:1px dashed var(--line2);padding-bottom:8px;margin-bottom:14px!important}
+.fv{background:#EEF6F6;border-radius:3px;padding:0 2px}
+mark.miss{background:var(--err-soft);color:var(--err);font-family:var(--f-body);font-weight:700;font-size:12.5px;border-radius:4px;padding:1px 5px;border:1px dashed var(--err)}
+.vbar{position:sticky;bottom:0;z-index:15;margin-top:18px;background:color-mix(in srgb,var(--surface) 96%,transparent);backdrop-filter:blur(8px);border:1px solid var(--line2);border-radius:var(--r);padding:14px 18px calc(14px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 18px;align-items:center;box-shadow:0 -10px 30px -18px rgba(0,0,0,.3)}
+.vcons{margin:0;font-size:13.5px}
+.vdemo{margin:0;font-size:12.5px;color:var(--muted);grid-column:1}
+.vbtns{grid-column:2;grid-row:1/span 3;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.vwhy{margin:0;font-size:12.5px;color:var(--err);font-weight:600;grid-column:1}
+.vwhy:empty{display:none}
+/* nowa umowa */
+.nform{display:grid;gap:16px;max-width:860px}
+.nsec{padding:18px 20px;display:grid;gap:14px}
+.nsec h2{font-size:19px}
+.kinds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kind{all:unset;box-sizing:border-box;cursor:pointer;border:1.5px solid var(--line2);border-radius:var(--rs);padding:14px;display:grid;gap:4px;background:var(--surface)}
+.kind h3{font-size:16px}
+.kind small{color:var(--muted);font-size:12.5px}
+.kind.sel{border-color:var(--action);box-shadow:inset 0 0 0 1px var(--action);background:var(--action-soft)}
+.kind.sel h3::before{content:"✓ ";color:var(--action)}
+.kind.dis{cursor:default;border-style:dashed;opacity:.75}
+.kind:focus-visible{outline:3px solid var(--action);outline-offset:2px}
+.nform .vbar{max-width:860px}
+.nform .vbtns{grid-row:1/span 2}
+.nform .ferr{min-height:0;margin-top:4px}
+.nform [aria-invalid=true]{border-color:var(--err)}
+/* okno potwierdzenia */
+.modal{position:fixed;z-index:41;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,calc(100% - 24px));max-height:calc(100% - 24px);overflow:auto;background:var(--surface);border-radius:18px;box-shadow:0 30px 80px -20px rgba(0,0,0,.4);animation:vtIn .25s cubic-bezier(.2,.7,.2,1)}
+.modal-h{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:20px 22px 6px}
+.modal-h h2{font-size:22px}
+.modal-b{padding:6px 22px 22px;display:grid;gap:12px}
+.mlead{margin:0;font-size:15px}
+.mnote{margin:0;font-size:13.5px;color:var(--muted)}
+.mbtns{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:4px}
+/* przewodnik */
+.tour{position:fixed;z-index:80;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));width:min(380px,calc(100% - 32px));background:var(--fg);color:#fff;border-radius:16px;padding:16px 18px;box-shadow:0 24px 60px -18px rgba(0,0,0,.5);animation:vtIn .25s cubic-bezier(.2,.7,.2,1)}
+.tour h2{font-size:19px;margin:2px 0 6px}
+.tour p{margin:0;font-size:14px;line-height:1.5}
+.tour .tour-n{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;opacity:.75;font-weight:700}
+.tour-b{display:flex;justify-content:space-between;gap:8px;margin-top:12px}
+.tour .btn.ghost{color:#fff}
+.tour .btn.action{background:#fff;color:var(--fg);border-color:#fff}
+.tour-hl{outline:3px solid var(--action)!important;outline-offset:4px;border-radius:12px;position:relative;z-index:5}
+.mock select{border:1px solid var(--line2);border-radius:99px;padding:3px 8px;background:var(--surface);font-size:12.5px}
+@media (max-width:1180px){ .ws{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)} .facts{grid-template-columns:110px minmax(0,1fr)} }
+@media (max-width:860px){
+  .ws{grid-template-columns:minmax(0,1fr)} .dcol{display:none}
+  .detail{padding:18px 16px;border-radius:var(--r)}
+  .dact.sticky{position:sticky;bottom:0;z-index:15;background:var(--bg);margin:0 -16px -14px;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);border-radius:0 0 var(--rs) var(--rs);justify-items:stretch}
+  .dact.sticky .btn.action{justify-content:center;width:100%}
+  .vgrid{grid-template-columns:minmax(0,1fr)} .vright{position:static}
+  .vtabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:4px;margin-bottom:12px;position:sticky;top:58px;z-index:14}
+  .vtabs button{all:unset;cursor:pointer;flex:1;text-align:center;padding:9px 10px;border-radius:99px;font-size:14px;font-weight:600;color:var(--muted)}
+  .vtabs button[aria-selected="true"]{background:var(--fg);color:#fff}
+  .vtabs button:focus-visible{outline:3px solid var(--action);outline-offset:2px}
+  .vgrid[data-tab="dane"] .vright{display:none} .vgrid[data-tab="podglad"] .vleft{display:none}
+  .vbar{grid-template-columns:minmax(0,1fr);margin-inline:-4px}
+  .vbtns{grid-column:1;grid-row:auto;justify-content:stretch}
+  .vbtns .btn{flex:1;justify-content:center}
+  .vbtns .btn.action{order:-1;flex-basis:100%}
+  .nform .vbtns{grid-row:auto}
+  .kinds{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} .kind.dis{display:none}
+  .paper{padding:18px 16px}
+  body[data-view="pulpit-detail"] .dash-h{display:none}
+  .vbar{position:static;box-shadow:none}
+  .pv-wrap{flex-wrap:nowrap;max-width:100%;overflow-x:auto}
+  .pv{flex-wrap:nowrap}
+  .pv button{white-space:nowrap}
+}
+@media (max-width:560px){
+  .vfields{grid-template-columns:minmax(0,1fr)}
+  .qrow{flex-direction:column;gap:8px}
+  .facts{grid-template-columns:minmax(0,1fr);gap:2px}
+  .facts dd{margin-bottom:8px}
+  .qtools{flex-wrap:wrap} .qtools .search{flex-basis:100%} .qtools select{flex:1}
+  .dash-actions{width:100%} .dash-actions .btn.action{flex:1;justify-content:center}
+  .tour{left:16px;right:16px;width:auto}
+}
 </style>
 </head>
 <body>
 
 <div class="mock" role="region" aria-label="Informacja o makiecie">
-  <div><span class="dot">Pokaz</span>„Wysyłanie linków” tworzy prawdziwy link do formularza i otwiera Twój program pocztowy. Zgłoszenia przychodzą e-mailem. Pozostałe dane w pulpicie są przykładowe.</div>
+  <div><span class="dot">Pokaz</span>Dane fikcyjne. Akcje oznaczone „podgląd” niczego nie wysyłają. Formularz wysłany z linku w „Nowa umowa” trafia do tej sprawy w tej przeglądarce.</div>
+  <label style="display:inline-flex;gap:6px;align-items:center;color:var(--muted)">Stan ekranu:<select id="demoState"><option value="normal">zwykły</option><option value="empty">pusta kolejka</option><option value="error">błąd wczytania</option></select></label>
   <div class="pv-wrap"><span style="color:var(--muted)">Kolorystyka:</span><div class="pv" id="pvSeg" role="radiogroup" aria-label="Kolorystyka pulpitu"></div></div>
 </div>
 
@@ -437,12 +640,13 @@ const PV={
  12:{name:"Róż",head:"DM Serif Display",body:"Work Sans",hw:400,pal:["#FF5CA8","#FFA6D0","#FFE3F1"],
     t:{bg:"#FFF7FB",fg:"#3A1428",muted:"#7E6070",line:"#F8E3EE",line2:"#F3CFE2",accent:"#C42A72","accent-fg":"#FFFFFF","accent-soft":"#FFE3F1",mint:"#FFA6D0",mint2:"#FFC7E4",blush:"#FFE3F1",sand:"#F8DCEA"}},
 };
+const ACT={1:["#4338CA","#3730A3"],2:["#C2410C","#9A3412"],3:["#146A6E","#0F5457"],4:["#881144","#6E0D37"],5:["#7A3F56","#633245"],6:["#1E6B6E","#175759"],7:["#1E6B6E","#175759"],8:["#0D6E5D","#0A5A4C"],9:["#5B3CC4","#4A2FA6"],10:["#1F6FB8","#185C99"],11:["#8A4F00","#6F3F00"],12:["#C42A72","#A3215E"]};
 (function(){
   const SANS='system-ui,-apple-system,"Segoe UI",Roboto,sans-serif', SERIF='Georgia,"Times New Roman",serif';
   let css="";
   for(const [n,v] of Object.entries(PV)){
     const hs=/Serif|Lora|^Quattrocento$/.test(v.head)?SERIF:SANS;
-    css+=`:root[data-pv="${n}"]{${Object.entries(v.t).map(([k,x])=>`--${k}:${x}`).join(";")};--f-head:"${v.head}",${hs};--f-body:"${v.body}",${SANS};--hw:${v.hw}}\n`;
+    css+=`:root[data-pv="${n}"]{${Object.entries(v.t).map(([k,x])=>`--${k}:${x}`).join(";")};--f-head:"${v.head}",${hs};--f-body:"${v.body}",${SANS};--hw:${v.hw};--action:${ACT[n][0]};--action-hover:${ACT[n][1]};--action-soft:color-mix(in srgb,${ACT[n][0]} 11%,#fff)}\n`;
   }
   const st=document.createElement("style"); st.textContent=css; document.head.appendChild(st);
 })();
@@ -478,35 +682,15 @@ const TPL=[
 const tplName=id=>(TPL.find(t=>t.id===id)||{}).name||id;
 const PEOPLE=[
   {id:"p1",n:"Anna Kowalska",em:"anna.kowalska@example.com",pesel:"03221504120",ur:"2003-02-15",city:"Kraków",student:true,umowy:3,last:"2026-11-24",flags:[{t:"Kończy 26 lat 15.02.2029: zmiana składek",l:"w"}]},
-  {id:"p2",n:"Tomasz Nowak",em:"t.nowak@example.com",pesel:"88041207731",ur:"1988-04-12",city:"Wieliczka",umowy:7,last:"2026-11-22",flags:[]},
+  {id:"p2",n:"Tomasz Nowak",em:"t.nowak@example.com",pesel:"88041207736",ur:"1988-04-12",city:"Wieliczka",umowy:7,last:"2026-11-22",flags:[]},
   {id:"p3",n:"Olena Bondarenko",em:"olena.b@example.com",pesel:"",ur:"1994-09-03",city:"Kraków",umowy:2,last:"2026-11-21",flags:[{t:"Karta pobytu ważna do 10.01.2027",l:"e"}]},
-  {id:"p4",n:"Michał Wiśniewski",em:"m.wisniewski@example.com",pesel:"01301804511",ur:"2001-10-18",city:"Skawina",student:true,umowy:1,last:"2026-11-20",flags:[{t:"Kończy 26 lat 18.10.2027",l:"w"}]},
+  {id:"p4",n:"Michał Wiśniewski",em:"m.wisniewski@example.com",pesel:"01301804517",ur:"2001-10-18",city:"Skawina",student:true,umowy:1,last:"2026-11-20",flags:[{t:"Kończy 26 lat 18.10.2027",l:"w"}]},
   {id:"p5",n:"Katarzyna Zielińska",em:"k.zielinska@example.com",pesel:"79112301284",ur:"1979-11-23",city:"Niepołomice",umowy:12,last:"2026-11-18",flags:[{t:"Brak PIT-2 na 2027",l:"w"}]},
-  {id:"p6",n:"Paweł Lewandowski",em:"pawel.l@example.com",pesel:"92061509876",ur:"1992-06-15",city:"Kraków",umowy:4,last:"2025-09-02",flags:[{t:"Dane starsze niż 12 miesięcy",l:"w"}]},
-  {id:"p8",n:"Jakub Mazur",em:"jakub.mazur@example.com",pesel:"99070312355",ur:"1999-07-03",city:"Kraków",umowy:1,last:"2026-11-25",flags:[]},
-  {id:"p7",n:"Zofia Dąbrowska",em:"zofia.d@example.com",pesel:"55030212346",ur:"1955-03-02",city:"Myślenice",emeryt:true,umowy:5,last:"2026-10-30",flags:[]},
+  {id:"p6",n:"Paweł Lewandowski",em:"pawel.l@example.com",pesel:"92061509875",ur:"1992-06-15",city:"Kraków",umowy:4,last:"2025-09-02",flags:[{t:"Dane starsze niż 12 miesięcy",l:"w"}]},
+  {id:"p8",n:"Jakub Mazur",em:"jakub.mazur@example.com",pesel:"99070312359",ur:"1999-07-03",city:"Kraków",umowy:1,last:"2026-11-25",flags:[]},
+  {id:"p7",n:"Zofia Dąbrowska",em:"zofia.d@example.com",pesel:"55030212347",ur:"1955-03-02",city:"Myślenice",emeryt:true,umowy:5,last:"2026-10-30",flags:[]},
 ];
 const person=id=>PEOPLE.find(p=>p.id===id);
-let SUBS=[
-  {nr:"ZL-20261125-0718",p:"p8",tpl:"zl",date:"2026-11-25 07:18",st:"podpis",files:["Oświadczenie zleceniobiorcy","PIT-2"]},
-  {nr:"ZL-20261124-1435",p:"p1",tpl:"zl",date:"2026-11-24 22:41",st:"nowe",files:["Oświadczenie zleceniobiorcy","PIT-2"]},
-  {nr:"ZL-20261122-0912",p:"p2",tpl:"zl",date:"2026-11-22 09:12",st:"nowe",files:["Oświadczenie zleceniobiorcy","PIT-2","Rezygnacja z PPK"]},
-  {nr:"DZ-20261121-5520",p:"p3",tpl:"dz",date:"2026-11-21 17:05",st:"nowe",files:["Oświadczenie wykonawcy dzieła"]},
-  {nr:"ZL-20261120-3388",p:"p4",tpl:"zl",date:"2026-11-20 13:47",st:"weryf",files:["Oświadczenie zleceniobiorcy"]},
-  {nr:"AK-20261119-2201",p:"p6",tpl:"ak",date:"2026-11-19 08:30",st:"popr",files:["Karta zgłoszenia"],note:"Numer rachunku nie zgadza się z poprzednim. Poproszono o potwierdzenie."},
-  {nr:"ZL-20261118-7710",p:"p5",tpl:"zl",date:"2026-11-18 10:02",st:"umowa",files:["Oświadczenie zleceniobiorcy","PIT-2"]},
-  {nr:"DZ-20261114-4419",p:"p7",tpl:"dz",date:"2026-11-14 16:20",st:"umowa",files:["Oświadczenie wykonawcy dzieła"]},
-  {nr:"ZL-20261030-1003",p:"p7",tpl:"zl",date:"2026-10-30 11:11",st:"arch",files:["Oświadczenie zleceniobiorcy"]},
-  {nr:"ZL-20261012-6644",p:"p2",tpl:"zl",date:"2026-10-12 19:54",st:"arch",files:["Oświadczenie zleceniobiorcy","PIT-2"]},
-];
-let INV=[
-  {id:"i1",n:"Jakub Mazur",em:"jakub.mazur@example.com",tpl:"zl",sent:"2026-11-23",exp:"2026-12-07",st:"wypelnione",rem:0,step:8},
-  {id:"i2",n:"Natalia Wójcik",em:"n.wojcik@example.com",tpl:"zl",sent:"2026-11-21",exp:"2026-12-05",st:"wyslane",rem:1,step:0},
-  {id:"i3",n:"Olena Bondarenko",em:"olena.b@example.com",tpl:"dz",sent:"2026-11-20",exp:"2026-12-04",st:"wypelnione",rem:0,step:8},
-  {id:"i4",n:"Piotr Kamiński",em:"p.kaminski@example.com",tpl:"dz",sent:"2026-11-19",exp:"2026-12-03",st:"wyslane",rem:2,step:0},
-  {id:"i5",n:"Paweł Lewandowski",em:"pawel.l@example.com",tpl:"ak",sent:"2026-11-18",exp:"2026-12-02",st:"wypelnione",rem:0,step:3},
-  {id:"i6",n:"Ewa Szymańska",em:"ewa.sz@example.com",tpl:"zl",sent:"2026-11-02",exp:"2026-11-16",st:"wygasle",rem:2,step:0},
-];
 const ROLE_NAME={admin:"Administrator",zarzad:"Zarząd",ksiegowosc:"Księgowość"};
 let role="admin";
 const can={builder:()=>true,settings:()=>true}; // księgowość i zarząd mają pełne uprawnienia
@@ -516,15 +700,13 @@ const maskPesel=p=>p?"••••••"+p.slice(6):"brak (obcokrajowiec)";
 
 /* ---------- nawigacja ---------- */
 const VIEWS=[
-  {id:"start",lab:"Start",ic:"home"},
-  {id:"zgloszenia",lab:"Zgłoszenia",ic:"inbox",cnt:()=>SUBS.filter(s=>s.st==="nowe").length},
-  {id:"zaproszenia",lab:"Wysyłanie linków",ic:"send"},
+  {id:"pulpit",lab:"Pulpit",ic:"home",cnt:()=>CASES.filter(c=>CS[c.st].who==="emp").length},
+  {id:"umowy",lab:"Wszystkie umowy",ic:"inbox"},
   {id:"kartoteka",lab:"Kartoteka",ic:"people"},
   {id:"kreator",lab:"Formularze",ic:"form",show:()=>can.builder()},
   {id:"ustawienia",lab:"Ustawienia",ic:"gear",show:()=>can.settings()},
 ];
-function current(){ const h=location.hash.slice(1); const v=VIEWS.find(v=>v.id===h&&(!v.show||v.show())); return v?v.id:"start"; }
-function go(id){ if(location.hash!=="#"+id) location.hash=id; else render(); }
+function current(){ return route().nav; }
 const NAV_KEY="eskander-pulpit-menu";
 const DEFAULT_ORDER=VIEWS.map(v=>v.id);
 let NAV_ORDER=(()=>{ try{ const o=JSON.parse(localStorage.getItem(NAV_KEY)||"null"); if(Array.isArray(o)&&o.length===DEFAULT_ORDER.length&&DEFAULT_ORDER.every(id=>o.includes(id))) return o; }catch(e){} return DEFAULT_ORDER.slice(); })();
@@ -598,178 +780,382 @@ function toast(msg){ const t=$("#toast"); t.textContent=msg; t.hidden=false; cle
 const pill=(st,map=STATUS)=>`<span class="pill st-${st}">${esc(map[st])}</span>`;
 const tag=id=>`<span class="tag ${id}">${esc(tplName(id))}</span>`;
 
-/* ---------- widoki ---------- */
-const NOW=new Date("2026-11-25T10:00:00");
+const FORM_URL="https://igor1427.github.io/formularz-eskander/";
+/* ---------- sprawy umów: model i dane przykładowe (fikcyjne) ---------- */
+const NOW=new Date("2026-11-28T10:00:00");
 const PL_MONTH=["sty","lut","mar","kwi","maj","cze","lip","sie","wrz","paź","lis","gru"];
-function ago(s){ const t=new Date(s.replace(" ","T")); const h=Math.round((NOW-t)/36e5); if(h<1) return "przed chwilą"; if(h<24) return h+" godz. temu"; const dd=Math.floor(h/24); return dd===1?"wczoraj":dd+" dni temu"; }
-function inDays(s){ return Math.round((new Date(s+"T10:00:00")-NOW)/864e5); }
-function deadlines(){
-  const L=[];
-  INV.filter(i=>i.st==="wyslane"||i.st==="otwarte").forEach(i=>L.push({d:i.exp,t:"Wygasa link do formularza",who:i.n,kind:"link",ref:"#zaproszenia"}));
-  L.push({d:"2026-12-31",t:"Brak PIT-2 na 2027 rok",who:"Katarzyna Zielińska",kind:"doc",pid:"p5"});
-  L.push({d:"2027-01-10",t:"Kończy się karta pobytu",who:"Olena Bondarenko",kind:"err",pid:"p3"});
-  L.push({d:"2027-10-18",t:"26. urodziny: umowa zacznie podlegać ZUS",who:"Michał Wiśniewski",kind:"zus",pid:"p4"});
-  L.push({d:"2029-02-15",t:"26. urodziny: umowa zacznie podlegać ZUS",who:"Anna Kowalska",kind:"zus",pid:"p1"});
-  return L.sort((a,b)=>a.d.localeCompare(b.d));
+const MON=["stycznia","lutego","marca","kwietnia","maja","czerwca","lipca","sierpnia","września","października","listopada","grudnia"];
+const toD=s=>new Date(String(s).length<=10?s+"T12:00:00":String(s).replace(" ","T"));
+const dLong=s=>{ const d=toD(s); return `${d.getDate()} ${MON[d.getMonth()]}`; };
+const dShort=s=>{ const d=toD(s); return `${d.getDate()} ${PL_MONTH[d.getMonth()]}`; };
+const dFull=s=>{ const d=toD(s); return `${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}`; };
+const hm=s=>String(s).slice(11,16);
+function rel(s){ const a=new Date(NOW); a.setHours(0,0,0,0); const b=toD(s); b.setHours(0,0,0,0); const n=Math.round((a-b)/864e5);
+  return n<=0?"dziś":n===1?"wczoraj":n<5?`${n} dni temu`:`${n} dni temu`; }
+const money=n=>(n===""||n==null||isNaN(+n))?"":String(Math.round(+n*100)/100).replace(".",",").replace(/\B(?=(\d{3})+(?!\d))/g,"\u00a0")+" zł";
+const KIND={zl:"Umowa zlecenia",dz:"Umowa o dzieło"};
+const TEMPLATES=[
+  {id:"zl-std",kind:"zl",name:"Umowa zlecenia – standard",ver:3,sig:"zwykły z kodem SMS"},
+  {id:"zl-zdal",kind:"zl",name:"Umowa zlecenia – praca zdalna",ver:1,sig:"zwykły z kodem SMS"},
+  {id:"dz-std",kind:"dz",name:"Umowa o dzieło – standard",ver:2,sig:"zwykły z kodem SMS"},
+  {id:"dz-praw",kind:"dz",name:"Umowa o dzieło z przeniesieniem praw autorskich",ver:1,sig:"kwalifikowany"},
+];
+const tplById=id=>TEMPLATES.find(t=>t.id===id)||TEMPLATES[0];
+const FIRMA={nazwa:"[Eskander – pełna nazwa firmy]",nip:"[NIP]",adres:"[adres siedziby]"};
+const OWNER={name:"Anna Kowal",email:"anna.kowal@eskander.example",tel:"+48 600 100 200"};
+/* status sprawy: etykieta, ikona (zawsze z tekstem), ton koloru, kto ma ruch */
+const CS={
+  szkic:{l:"Szkic",ic:"✎",tone:"muted",who:"emp"},
+  dane:{l:"Czekamy na dane",ic:"⏳",tone:"info",who:"client"},
+  wygaslo:{l:"Zaproszenie wygasło",ic:"⌛",tone:"warn",who:"emp"},
+  weryf:{l:"Do weryfikacji",ic:"☑",tone:"act",who:"emp"},
+  niepewne:{l:"Sprawdzamy stan wysyłki",ic:"↻",tone:"warn",who:"emp"},
+  blad:{l:"Błąd wysyłki",ic:"!",tone:"err",who:"emp"},
+  podpisy:{l:"Oczekuje na podpisy",ic:"✍",tone:"info",who:"signer"},
+  podpisana:{l:"Podpisana",ic:"✓",tone:"ok",who:"none"},
+  odrzucona:{l:"Odrzucona przez podpisującego",ic:"✕",tone:"err",who:"emp"},
+  zatw_demo:{l:"Zatwierdzona (podgląd)",ic:"◐",tone:"muted",who:"none"},
+};
+const PRIORITY=["blad","niepewne","odrzucona","weryf","wygaslo","szkic"];
+const badge=st=>`<span class="sbadge t-${CS[st].tone}"><span class="si" aria-hidden="true">${CS[st].ic}</span>${esc(CS[st].l)}</span>`;
+const mk=(o)=>({log:[],...o});
+let CASES=[
+  mk({id:"um-2026-0048",nr:"UM/2026/0048",p:"p1",kind:"zl",tpl:"zl-std",st:"szkic",since:"2026-11-28 09:50",changed:"2026-11-28 09:50",changedWhat:"Anna Kowal utworzyła szkic",
+    c:{imie:"Anna",nazwisko:"Kowalska",pesel:"03221504120",adres:"ul. Długa 12/4, 31-147 Kraków",email:"anna.kowalska@example.com",tel:"+48 600 111 222",konto:"61 1090 1014 0000 0712 1981 2874"},
+    t:{zakres:"Prowadzenie warsztatów dla klientów",kwota:"",od:"2026-12-08",do:"2026-12-19",miejsce:"Kraków"},log:[["2026-11-28 09:50","Utworzono szkic (Anna Kowal)"]]}),
+  mk({id:"um-2026-0047",nr:"UM/2026/0047",p:"n1",kind:"zl",tpl:"zl-std",st:"weryf",since:"2026-11-27 14:05",changed:"2026-11-27 14:05",changedWhat:"Klient przesłał dane",
+    c:{imie:"Jan",nazwisko:"Nowak",pesel:"92061509875",adres:"ul. Polna 5, 43-600 Jaworzno",email:"jan.nowak@example.com",tel:"",konto:"61 1090 1014 0000 0712 1981 2874"},
+    t:{zakres:"Obsługa magazynu i kompletacja zamówień",kwota:"4000",od:"2026-12-01",do:"2026-12-31",miejsce:"Magazyn Eskander, Jaworzno"},
+    log:[["2026-11-26 09:10","Wysłano formularz do klienta (Anna Kowal)"],["2026-11-27 14:05","Klient przesłał dane"]]}),
+  mk({id:"um-2026-0046",nr:"UM/2026/0046",p:"p3",kind:"dz",tpl:"dz-std",st:"weryf",since:"2026-11-28 08:40",changed:"2026-11-28 08:40",changedWhat:"Klientka przesłała dane",
+    c:{imie:"Olena",nazwisko:"Bondarenko",pesel:"94090312349",adres:"ul. Krakowska 8/2, 30-001 Kraków",email:"olena.b@example.com",tel:"+48 511 222 333",konto:"PL 27 1140 2004 0000 3002 0135 5387"},
+    t:{zakres:"Projekt graficzny katalogu produktów (24 strony)",kwota:"3200",od:"2026-12-02",do:"2026-12-20",miejsce:"praca zdalna"},
+    log:[["2026-11-27 11:00","Wysłano formularz do klientki (Anna Kowal)"],["2026-11-28 08:40","Klientka przesłała dane"]]}),
+  mk({id:"um-2026-0045",nr:"UM/2026/0045",p:"n2",kind:"dz",tpl:"dz-std",st:"blad",since:"2026-11-28 09:31",changed:"2026-11-28 09:31",changedWhat:"Autenti odrzuciło wysyłkę",
+    err:"Autenti odrzuciło numer telefonu podpisującego: „+48 600 12 34” ma za mało cyfr. Nic nie zostało wysłane do klientki.",
+    c:{imie:"Ewa",nazwisko:"Lis",pesel:"88041207736",adres:"ul. Ogrodowa 3, 32-020 Wieliczka",email:"ewa.lis@example.com",tel:"+48 600 12 34",konto:"61 1090 1014 0000 0712 1981 2874"},
+    t:{zakres:"Opracowanie instrukcji stanowiskowych (10 sztuk)",kwota:"2500",od:"2026-12-01",do:"2026-12-15",miejsce:"praca zdalna"},
+    log:[["2026-11-27 16:20","Klientka przesłała dane"],["2026-11-28 09:30","Zatwierdzono i wysłano do podpisu (Anna Kowal)"],["2026-11-28 09:31","Błąd wysyłki: nieprawidłowy numer telefonu"]]}),
+  mk({id:"um-2026-0044",nr:"UM/2026/0044",p:"p4",kind:"zl",tpl:"zl-std",st:"niepewne",since:"2026-11-28 09:12",changed:"2026-11-28 09:12",changedWhat:"Brak potwierdzenia od Autenti",
+    c:{imie:"Michał",nazwisko:"Wiśniewski",pesel:"01301804517",adres:"ul. Słoneczna 9, 32-050 Skawina",email:"m.wisniewski@example.com",tel:"+48 503 444 555",konto:"61 1090 1014 0000 0712 1981 2874"},
+    t:{zakres:"Obsługa stoiska na targach",kwota:"1800",od:"2026-12-05",do:"2026-12-07",miejsce:"Kraków, EXPO"},
+    log:[["2026-11-28 09:11","Zatwierdzono i wysłano do podpisu (Anna Kowal)"],["2026-11-28 09:12","Autenti nie potwierdziło przyjęcia w czasie 30 s"]]}),
+  mk({id:"um-2026-0043",nr:"UM/2026/0043",p:"n3",kind:"zl",tpl:"zl-std",st:"dane",since:"2026-11-26 11:20",changed:"2026-11-26 11:20",changedWhat:"Wysłano formularz",invUntil:"2026-12-10",
+    c:{imie:"Piotr",nazwisko:"Kamiński",pesel:"",adres:"",email:"p.kaminski@example.com",tel:"",konto:""},
+    t:{zakres:"Inwentaryzacja magazynu",kwota:"2200",od:"2026-12-14",do:"2026-12-18",miejsce:"Magazyn Eskander, Jaworzno"},
+    log:[["2026-11-26 11:20","Wysłano formularz do klienta (Anna Kowal)"]]}),
+  mk({id:"um-2026-0042",nr:"UM/2026/0042",p:"n4",kind:"zl",tpl:"zl-zdal",st:"wygaslo",since:"2026-11-27 23:59",changed:"2026-11-27 23:59",changedWhat:"Link do formularza wygasł",invUntil:"2026-11-27",
+    c:{imie:"Natalia",nazwisko:"Wójcik",pesel:"",adres:"",email:"n.wojcik@example.com",tel:"",konto:""},
+    t:{zakres:"Obsługa infolinii (zdalnie)",kwota:"3000",od:"2026-12-01",do:"2026-12-31",miejsce:"praca zdalna"},
+    log:[["2026-11-13 10:00","Wysłano formularz do klientki (Anna Kowal)"],["2026-11-20 10:00","Przypomnienie wysłane automatycznie"],["2026-11-27 23:59","Link wygasł, klientka nie przesłała danych"]]}),
+  mk({id:"um-2026-0041",nr:"UM/2026/0041",p:"p2",kind:"zl",tpl:"zl-std",st:"podpisy",since:"2026-11-27 15:20",changed:"2026-11-27 15:20",changedWhat:"Anna Kowal podpisała",
+    c:{imie:"Tomasz",nazwisko:"Nowak",pesel:"88041207736",adres:"ul. Lipowa 2, 32-020 Wieliczka",email:"t.nowak@example.com",tel:"+48 501 222 111",konto:"61 1090 1014 0000 0712 1981 2874"},
+    t:{zakres:"Rozładunek dostaw",kwota:"2800",od:"2026-12-01",do:"2026-12-31",miejsce:"Magazyn Eskander, Jaworzno"},
+    signed:{firma:"2026-11-27 15:20"},
+    log:[["2026-11-27 15:02","Zatwierdzono i wysłano do podpisu (Anna Kowal)"],["2026-11-27 15:03","Autenti przyjęło dokument"],["2026-11-27 15:20","Podpisała: Anna Kowal (Eskander)"]]}),
+  mk({id:"um-2026-0040",nr:"UM/2026/0040",p:"p7",kind:"dz",tpl:"dz-std",st:"podpisy",since:"2026-11-26 12:10",changed:"2026-11-26 12:10",changedWhat:"Klientka podpisała",
+    c:{imie:"Zofia",nazwisko:"Dąbrowska",pesel:"55030212347",adres:"ul. Rynek 4, 32-400 Myślenice",email:"zofia.d@example.com",tel:"+48 502 333 444",konto:"61 1090 1014 0000 0712 1981 2874"},
+    t:{zakres:"Tłumaczenie regulaminu na język angielski",kwota:"1500",od:"2026-11-27",do:"2026-12-05",miejsce:"praca zdalna"},
+    signed:{client:"2026-11-26 12:10"},
+    log:[["2026-11-26 10:40","Zatwierdzono i wysłano do podpisu (Anna Kowal)"],["2026-11-26 12:10","Podpisała: Zofia Dąbrowska"]]}),
+  mk({id:"um-2026-0039",nr:"UM/2026/0039",p:"p5",kind:"zl",tpl:"zl-std",st:"podpisana",since:"2026-11-25 16:45",changed:"2026-11-25 16:45",changedWhat:"Podpisana przez wszystkich",
+    c:{imie:"Katarzyna",nazwisko:"Zielińska",pesel:"79112301284",adres:"ul. Kościuszki 1, 32-005 Niepołomice",email:"k.zielinska@example.com",tel:"+48 504 555 666",konto:"61 1090 1014 0000 0712 1981 2874"},
+    t:{zakres:"Szkolenie BHP dla nowych pracowników",kwota:"1200",od:"2026-11-26",do:"2026-11-27",miejsce:"Jaworzno"},
+    signed:{firma:"2026-11-25 14:00",client:"2026-11-25 16:45"},
+    log:[["2026-11-25 13:50","Zatwierdzono i wysłano do podpisu (Anna Kowal)"],["2026-11-25 14:00","Podpisała: Anna Kowal (Eskander)"],["2026-11-25 16:45","Podpisała: Katarzyna Zielińska · umowa podpisana"]]}),
+  mk({id:"um-2026-0038",nr:"UM/2026/0038",p:"p6",kind:"zl",tpl:"zl-std",st:"odrzucona",since:"2026-11-27 18:30",changed:"2026-11-27 18:30",changedWhat:"Klient odrzucił dokument",
+    reject:"„Okres umowy jest błędny, pracuję od 1 grudnia, nie od 1 listopada.”",
+    c:{imie:"Paweł",nazwisko:"Lewandowski",pesel:"92061509875",adres:"ul. Zielona 7, 30-002 Kraków",email:"pawel.l@example.com",tel:"+48 505 666 777",konto:"61 1090 1014 0000 0712 1981 2874"},
+    t:{zakres:"Kierowanie wózkiem widłowym",kwota:"4200",od:"2026-11-01",do:"2026-12-31",miejsce:"Magazyn Eskander, Jaworzno"},
+    log:[["2026-11-27 09:00","Zatwierdzono i wysłano do podpisu (Anna Kowal)"],["2026-11-27 18:30","Odrzucił: Paweł Lewandowski"]]}),
+];
+const NEWPEOPLE=[{id:"n1",n:"Jan Nowak",em:"jan.nowak@example.com"},{id:"n2",n:"Ewa Lis",em:"ewa.lis@example.com"},{id:"n3",n:"Piotr Kamiński",em:"p.kaminski@example.com"},{id:"n4",n:"Natalia Wójcik",em:"n.wojcik@example.com"}];
+const caseById=id=>CASES.find(c=>c.id===id);
+const cname=c=>`${c.c.imie||""} ${c.c.nazwisko||""}`.trim()||c.c.email||"(nowy kontrahent)";
+/* kto podpisuje i jaki jest stan podpisów */
+function signers(c){ const tp=tplById(c.tpl);
+  return [{who:"client",name:cname(c),email:c.c.email,tel:c.c.tel,type:tp.sig,at:c.signed&&c.signed.client},
+          {who:"firma",name:OWNER.name+" (Eskander)",email:OWNER.email,tel:OWNER.tel,type:"zwykły z kodem SMS",at:c.signed&&c.signed.firma}]; }
+/* jedno zdanie: na kogo/co czekamy albo co ma zrobić pracownik */
+function nextLine(c){
+  switch(c.st){
+    case "szkic": return "Uzupełnij warunki i wyślij formularz do klienta.";
+    case "dane": return c.demoInv?`Czekamy na dane od klienta od ${dLong(c.since)}. Podgląd: e-mail z linkiem nie został wysłany przez system — przekaż link samodzielnie.`:`Czekamy na dane od klienta od ${dLong(c.since)}. Link ważny do ${dLong(c.invUntil)}.`;
+    case "wygaslo": return `Link wygasł ${dLong(c.invUntil)}, klient nie przesłał danych. Wyślij nowy link.`;
+    case "weryf": return `Klient przesłał dane ${rel(c.since)}, ${hm(c.since)}. Sprawdź je przed wysłaniem do podpisu.`;
+    case "niepewne": return "Autenti nie potwierdziło przyjęcia umowy. Najpierw sprawdzamy, czy dotarła — nic nie wyślemy ponownie bez tego.";
+    case "blad": return "Wysyłka do Autenti nie powiodła się. Popraw dane i wyślij ponownie.";
+    case "podpisy": { const pend=signers(c).filter(s=>!s.at);
+      if(pend.length===2) return `Czekamy na podpisy obu stron od ${dLong(c.since)}.`;
+      return pend[0].who==="client"?`Czekamy na podpis klienta od ${dLong(c.since)}.`:`Czekamy na podpis: ${pend[0].name} od ${dLong(c.since)}.`; }
+    case "podpisana": return `Podpisana przez wszystkich ${dLong(c.since)}.`;
+    case "odrzucona": return "Klient odrzucił umowę. Popraw dane i wyślij nową wersję do podpisu.";
+    case "zatw_demo": return "Zatwierdzona w podglądzie. Nic nie zostało wysłane (integracja z Autenti jeszcze nie działa).";
+  } return ""; }
+/* krótka informacja do wiersza kolejki */
+function rowHint(c){
+  switch(c.st){
+    case "dane": return `od ${dLong(c.since)} · link do ${dShort(c.invUntil)}`;
+    case "podpisy": { const pend=signers(c).filter(s=>!s.at); return pend.length===2?`podpisy obu stron · od ${dShort(c.since)}`:pend[0].who==="client"?`podpis klienta · od ${dShort(c.since)}`:`podpis ${OWNER.name} · od ${dShort(c.since)}`; }
+    case "weryf": return `dane od klienta ${rel(c.since)}, ${hm(c.since)}`;
+    case "blad": return "nieprawidłowy numer telefonu";
+    case "niepewne": return `brak potwierdzenia od ${hm(c.since)}`;
+    case "wygaslo": return `wygasł ${dShort(c.invUntil)}`;
+    case "odrzucona": return `odrzucona ${rel(c.since)}`;
+    case "szkic": return "brak wynagrodzenia";
+    default: return `${dShort(c.since)}`;
+  } }
+/* jedna główna akcja na status (+ pomocnicze o niższej wadze) */
+function primaryFor(c){
+  switch(c.st){
+    case "szkic": return {act:"openNew",label:"Dokończ i wyślij formularz"};
+    case "wygaslo": return {act:"resendInvite",label:"Wyślij nowy link",demo:true};
+    case "weryf": return {act:"verify",label:"Sprawdź dane"};
+    case "niepewne": return {act:"checkState",label:"Sprawdź stan wysyłki",demo:true};
+    case "blad": return {act:"verify",label:"Popraw i wyślij ponownie"};
+    case "odrzucona": return {act:"verify",label:"Popraw i przygotuj nową wersję"};
+    case "podpisana": return {act:"download",label:"Pobierz podpisaną umowę",demo:true};
+  } return null; }
+function secondaryFor(c){
+  switch(c.st){
+    case "dane": return [{act:"remind",label:"Przypomnij klientowi",demo:true},{act:"copyFormLink",label:"Kopiuj link do formularza"},{act:"revoke",label:"Unieważnij link",demo:true}];
+    case "podpisy": return [{act:"remindSign",label:"Przypomnij przez Autenti",demo:true},{act:"withdraw",label:"Wycofaj z podpisu",demo:true,danger:true}];
+    case "wygaslo": return [{act:"verify",label:"Uzupełnij dane samodzielnie"}];
+    case "weryf": return [{act:"preview",label:"Podgląd umowy"}];
+  } return []; }
+const bucket=c=>CS[c.st].who==="emp"?"todo":(CS[c.st].who==="client"||CS[c.st].who==="signer")?"wait":"done";
+let selId=null, qF={q:"",kind:"all"}, listF={q:"",st:"all",kind:"all",who:"all"}, loadError=false, pendingScroll=null, pulpitScroll=0;
+const isMobile=()=>matchMedia("(max-width:860px)").matches;
+let demoState="normal"; // makieta: podgląd stanów ekranu (normalny / pusta kolejka / błąd wczytania)
+function qMatch(c){ const q=qF.q.trim().toLowerCase(); if(demoState==="empty"&&bucket(c)==="todo") return false; return (qF.kind==="all"||c.kind===qF.kind)&&(!q||(cname(c)+" "+c.nr+" "+(c.c.email||"")+" "+c.t.zakres).toLowerCase().includes(q)); }
+function sortTodo(a,b){ return PRIORITY.indexOf(a.st)-PRIORITY.indexOf(b.st)||a.since.localeCompare(b.since); }
+
+/* ---------- widok: pulpit ---------- */
+function qRow(c){
+  return `<li><button type="button" class="qrow tone-${CS[c.st].tone}" data-case="${c.id}" aria-current="${c.id===selId}">
+    <span class="qmain"><b>${esc(cname(c))}</b><span class="qhint">${esc(rowHint(c))}</span><span class="qmeta">${esc(KIND[c.kind])} · ${esc(c.nr)}</span></span>
+    ${badge(c.st)}</button></li>`; }
+function queueHTML(){
+  if(loadError) return `<div class="qstate" role="alert"><b>Nie udało się wczytać spraw.</b><p>Sprawdź połączenie z internetem i spróbuj ponownie. Twoje dane są bezpieczne.</p><button class="btn action" type="button" data-act="retryLoad">Spróbuj ponownie</button></div>`;
+  const list=CASES.filter(qMatch);
+  const todo=list.filter(c=>bucket(c)==="todo").sort(sortTodo), wait=list.filter(c=>bucket(c)==="wait").sort((a,b)=>a.since.localeCompare(b.since)), done=list.filter(c=>bucket(c)==="done");
+  if(!list.length) return `<div class="qstate"><b>Brak spraw dla „${esc(qF.q||KIND[qF.kind]||"")}”.</b><p>Sprawdź pisownię albo poszukaj w pełnej liście umów.</p><div class="qbtns"><button class="btn sm" type="button" data-act="clearQ">Wyczyść wyszukiwanie</button><a class="btn ghost sm" href="#umowy">Wszystkie umowy</a></div></div>`;
+  return `<section class="qsec" aria-labelledby="hTodo"><h2 id="hTodo">Do zrobienia <span class="qn">${todo.length}</span></h2>
+      ${todo.length?`<ul class="qlist">${todo.map(qRow).join("")}</ul>`:`<div class="qstate calm"><b>Nic na Ciebie nie czeka.</b><p>${wait.length?`${wait.length} ${wait.length===1?"sprawa jest":"sprawy są"} po stronie klientów lub podpisujących.`:"Wszystkie sprawy są zakończone."}</p><button class="btn action sm" type="button" data-act="openNew">+ Nowa umowa</button></div>`}</section>
+    <section class="qsec" aria-labelledby="hWait"><h2 id="hWait">Czekamy na innych <span class="qn">${wait.length}</span></h2>
+      ${wait.length?`<ul class="qlist">${wait.map(qRow).join("")}</ul>`:`<p class="qempty">Nikt nie ma teraz ruchu po swojej stronie.</p>`}</section>
+    ${done.length?`<details class="qsec qdone"><summary>Ostatnio zakończone <span class="qn">${done.length}</span></summary><ul class="qlist">${done.map(qRow).join("")}</ul></details>`:""}`;
 }
-function vStart(){
-  const by=k=>SUBS.filter(s=>s.st===k);
-  const flow=["podpis","nowe","weryf","popr","umowa","arch"];
-  const oldest=k=>{ const l=by(k); if(!l.length) return "brak"; const o=l.map(s=>s.date).sort()[0]; return "najstarsze: "+ago(o); };
-  const waiting=INV.filter(i=>i.st==="wyslane"||i.st==="otwarte");
-  const task=(s,btn)=>`<li class="task" data-sub="${s.nr}" tabindex="0" role="button"><span class="av sm">${esc(ini(person(s.p).n))}</span><span class="tt"><b>${esc(person(s.p).n)}</b><small>${esc(tplName(s.tpl))} · <span class="mono">${esc(s.nr)}</span></small></span><span class="when">${esc(ago(s.date))}</span><span class="btn sm">${btn}</span></li>`;
-  const dl=deadlines().slice(0,6);
-  return `<div class="hello"><div><p class="eyebrow">Środa, 25 listopada 2026</p><h1>Dzień dobry, Igor</h1><p class="lead">Masz <b>${by("nowe").length} nowe zgłoszenia</b> do sprawdzenia i <b>${waiting.length} osoby</b>, które jeszcze nie odesłały formularza.</p></div>
-    <div class="hello-actions"><div class="search big">${ico("search")}<input id="globalQ" type="search" placeholder="Szukaj osoby lub numeru zgłoszenia" aria-label="Szukaj w zgłoszeniach"></div><button class="btn primary" type="button" data-act="newInv">${ico("send")}Wyślij link do formularza</button></div></div>
-
-  <section class="flow card" aria-label="Zgłoszenia według etapu">
-    ${flow.map((k,i)=>`<button type="button" class="stage st-${k}" data-goflt="${k}"><span class="stage-k">${i+1}. ${esc(STATUS[k])}</span><span class="stage-v">${by(k).length}</span><span class="stage-s">${esc(k==="arch"?"zakończone":oldest(k))}</span></button>`).join("")}
-  </section>
-
-  <div class="work">
-    <section class="card queue"><div class="card-h"><h2>Do zrobienia</h2><span class="muted-s">kliknij pozycję, aby ją otworzyć</span></div><div class="card-b">
-      ${by("podpis").length?`<h3 class="q-h"><span class="dotc st-podpis"></span>Czekają na podpis w Autenti<span class="n">${by("podpis").length}</span></h3><ul class="tasks">${by("podpis").map(s=>task(s,"Zobacz")).join("")}</ul>`:""}
-      ${by("nowe").length?`<h3 class="q-h"><span class="dotc st-nowe"></span>Sprawdź nowe zgłoszenia<span class="n">${by("nowe").length}</span></h3><ul class="tasks">${by("nowe").map(s=>task(s,"Sprawdź")).join("")}</ul>`:""}
-      ${by("popr").length?`<h3 class="q-h"><span class="dotc st-popr"></span>Czekają na poprawki od osoby<span class="n">${by("popr").length}</span></h3><ul class="tasks">${by("popr").map(s=>task(s,"Zobacz")).join("")}</ul>`:""}
-      ${by("weryf").length?`<h3 class="q-h"><span class="dotc st-weryf"></span>W weryfikacji: przygotuj umowę<span class="n">${by("weryf").length}</span></h3><ul class="tasks">${by("weryf").map(s=>task(s,"Otwórz")).join("")}</ul>`:""}
-      <h3 class="q-h"><span class="dotc st-wyslane"></span>Nie odesłali formularza<span class="n">${waiting.length}</span></h3>
-      <ul class="tasks">${waiting.map(i=>`<li class="task" style="cursor:default"><span class="av sm">${esc(ini(i.n))}</span><span class="tt"><b>${esc(i.n)}</b><small>${esc(tplName(i.tpl))} · ${i.step?`na kroku ${i.step} z 8`:"jeszcze nie otworzył(a)"}</small></span><span class="when">ważny ${inDays(i.exp)} dni</span><button class="btn sm" type="button" data-act="remind" data-id="${i.id}">Przypomnij</button></li>`).join("")}</ul>
-    </div></section>
-
-    <div class="side">
-      <section class="card"><div class="card-h"><h2>Nadchodzące terminy</h2><a class="btn ghost sm" href="#kartoteka">Kartoteka</a></div><div class="card-b"><ul class="dl">
-        ${dl.map(x=>{ const dt=new Date(x.d+"T10:00:00"), n=inDays(x.d); return `<li ${x.pid?`data-person="${x.pid}" role="button" tabindex="0"`:`data-href="${x.ref}" role="button" tabindex="0"`}><span class="cal k-${x.kind}"><b>${dt.getDate()}</b><small>${PL_MONTH[dt.getMonth()]}${dt.getFullYear()!==2026?" "+String(dt.getFullYear()).slice(2):""}</small></span><span class="tt"><b>${esc(x.who)}</b><small>${esc(x.t)}</small></span><span class="when">${n<=31?`za ${n} dni`:n<365?`za ${Math.round(n/30)} mies.`:`za ${(n/365).toFixed(1).replace(".",",")} roku`}</span></li>`; }).join("")}
-      </ul></div></section>
-      <section class="card"><div class="card-h"><h2>Ostatnia aktywność</h2></div><div class="card-b"><ul class="feed">
-        <li><b>Anna Kowalska</b> wysłała zgłoszenie <span class="mono">ZL-20261124-1435</span><small>wczoraj, 22:41</small></li>
-        <li><b>Dział Kadr</b> pobrał PDF oświadczenia Tomasza Nowaka<small>dziś, 08:14</small></li>
-        <li><b>Jakub Mazur</b> wysłał formularz, dokumenty czekają na podpis w Autenti<small>dziś, 07:18</small></li>
-        <li>Automatyczne przypomnienie do <b>Natalii Wójcik</b><small>dziś, 07:00</small></li>
-      </ul></div></section>
+function factsHTML(c){
+  const tp=tplById(c.tpl);
+  return `<dl class="facts">
+    <dt>Kontrahent</dt><dd>${esc(cname(c))}${c.c.email?`<span class="sub">${esc(c.c.email)}</span>`:""}</dd>
+    <dt>Dokument</dt><dd>${esc(KIND[c.kind])}<span class="sub">${esc(tp.name)} · wersja ${tp.ver}</span></dd>
+    <dt>Zakres</dt><dd>${esc(c.t.zakres||"—")}</dd>
+    <dt>Wynagrodzenie</dt><dd>${c.t.kwota?esc(money(c.t.kwota))+" brutto":`<span class="miss-t">nie podano</span>`}</dd>
+    <dt>Okres</dt><dd>${c.t.od?esc(dFull(c.t.od)):"—"} – ${c.t.do?esc(dFull(c.t.do)):"—"}</dd>
+    <dt>Opiekun</dt><dd>${esc(OWNER.name)}</dd></dl>`; }
+function signersHTML(c){
+  if(!["podpisy","podpisana","odrzucona","niepewne","blad","zatw_demo"].includes(c.st)) return "";
+  return `<div class="dsec"><h3>Podpisujący</h3><ul class="sgn">${signers(c).map(s=>`<li><span class="sgn-st ${s.at?"ok":c.st==="odrzucona"&&s.who==="client"?"err":"wait"}" aria-hidden="true">${s.at?"✓":c.st==="odrzucona"&&s.who==="client"?"✕":"…"}</span><span><b>${esc(s.name)}</b><small>${s.at?`podpisał(a) ${esc(dShort(s.at))}, ${esc(hm(s.at))}`:c.st==="odrzucona"&&s.who==="client"?"odrzucił(a) dokument":c.st==="podpisy"?"jeszcze nie podpisał(a)":"podpis po wysłaniu"} · podpis ${esc(s.type)}</small></span></li>`).join("")}</ul></div>`; }
+function actionsHTML(c,sticky){
+  const p=primaryFor(c), sec=secondaryFor(c);
+  return `<div class="dact${sticky?" sticky":""}">
+    ${p?`<button class="btn action big" type="button" data-act="${p.act}" data-id="${c.id}">${esc(p.label)}${p.demo?` <span class="demo-tag">podgląd</span>`:""}</button>`:CS[c.st].who!=="emp"&&c.st!=="podpisana"?`<p class="noact">Nic nie musisz teraz robić.</p>`:""}
+    ${sec.length?`<div class="dsecbtn">${sec.map(s=>`<button class="btn ${s.danger?"ghost danger":"ghost"} sm" type="button" data-act="${s.act}" data-id="${c.id}">${esc(s.label)}${s.demo?` <span class="demo-tag">podgląd</span>`:""}</button>`).join("")}</div>`:""}
+  </div>`; }
+function detailHTML(c,mobile){
+  if(!c) return `<div class="dempty"><b>Wybierz sprawę z kolejki</b><p>Tutaj zobaczysz szczegóły umowy i następny krok.</p></div>`;
+  const extra=c.st==="blad"?`<div class="callout err" role="alert"><b>Co się stało:</b> ${esc(c.err)}<br><b>Co zrobić:</b> popraw numer telefonu na ekranie weryfikacji i wyślij ponownie.</div>`
+    :c.st==="niepewne"?`<div class="callout warn"><b>Co się stało:</b> wysłaliśmy umowę o ${esc(hm(c.since))}, ale Autenti nie odpowiedziało w wyznaczonym czasie.<br><b>Co dalej:</b> system sprawdza stan w Autenti. Jeśli umowa dotarła, sprawa sama przejdzie do „Oczekuje na podpisy”. Ponowna wysyłka będzie możliwa dopiero, gdy potwierdzimy, że nic nie dotarło.</div>`
+    :c.st==="odrzucona"?`<div class="callout err"><b>Powód podany przez klienta:</b> ${esc(c.reject||"brak")}</div>`
+    :c.st==="zatw_demo"?`<div class="callout"><b>Tryb podglądu.</b> Dane zostały zatwierdzone na ekranie, ale PDF nie powstał i nic nie trafiło do Autenti.</div>`:"";
+  return `<article class="detail" aria-labelledby="dName">
+    ${mobile?`<button class="btn ghost sm back" type="button" data-act="backToQueue">← Kolejka</button>`:""}
+    <header class="dhead"><span class="dnr">${esc(c.nr)} · ${esc(KIND[c.kind])}</span><h2 id="dName">${esc(cname(c))}</h2>${badge(c.st)}</header>
+    <div class="dnext"><p class="dnext-l">${CS[c.st].who==="emp"?"Twój następny krok":CS[c.st].who==="none"?"Stan":"Na co czekamy"}</p><p class="dnext-t">${esc(nextLine(c))}</p>${actionsHTML(c,mobile)}</div>
+    ${extra}
+    <p class="dchg">Ostatnia zmiana: <b>${esc(c.changedWhat)}</b> · ${esc(dShort(c.changed))}, ${esc(hm(c.changed))}</p>
+    <div class="dsec"><h3>Umowa</h3>${factsHTML(c)}</div>
+    ${signersHTML(c)}
+    <div class="dsec"><h3>Historia</h3><ul class="timeline">${c.log.slice().reverse().map(([d,t])=>`<li>${esc(t)}<small>${esc(dShort(d))}, ${esc(hm(d))}</small></li>`).join("")}</ul></div>
+  </article>`; }
+function vPulpit(r){
+  if(r.id&&isMobile()) return detailHTML(caseById(r.id),true);
+  if(r.id&&caseById(r.id)) selId=r.id;
+  const vis=CASES.filter(qMatch);
+  if(!selId||!caseById(selId)){ const t=vis.filter(c=>bucket(c)==="todo").sort(sortTodo); selId=(t[0]||vis[0]||{}).id||null; }
+  const todoN=CASES.filter(c=>bucket(c)==="todo").length;
+  return `<div class="dash-h">
+      <div><p class="eyebrow">Sobota, 28 listopada 2026</p><h1>Dzień dobry, Anna</h1><p class="lead">${todoN?`<b>${todoN} ${todoN===1?"sprawa czeka":"sprawy czekają"} na Twój ruch.</b> Zacznij od góry kolejki.`:"Nic na Ciebie nie czeka."}</p></div>
+      <div class="dash-actions"><button class="btn action big" type="button" data-act="openNew" data-tour="new">+ Nowa umowa</button><a class="btn ghost sm" href="#umowy">Wszystkie umowy →</a></div>
     </div>
-  </div>`;
+    <div class="ws">
+      <div class="qcol">
+        <div class="qtools"><div class="search">${ico("search")}<input id="qQ" type="search" placeholder="Szukaj: klient, numer, zakres" value="${esc(qF.q)}" aria-label="Szukaj w kolejce"></div>
+          <select class="inp" id="qKind" aria-label="Typ umowy"><option value="all">Wszystkie typy</option>${Object.entries(KIND).map(([k,v])=>`<option value="${k}" ${qF.kind===k?"selected":""}>${esc(v)}</option>`).join("")}</select></div>
+        <div id="queue">${queueHTML()}</div>
+      </div>
+      <div class="dcol" id="detail">${loadError?"":detailHTML(caseById(selId),false)}</div>
+    </div>`;
 }
 
-let subF={st:"all",tpl:"all",period:"all",alert:false,q:"",sort:"new"}, filtersOpen=false, picked=new Set();
-const PERIOD={all:"Dowolny termin","7":"Ostatnie 7 dni","30":"Ostatnie 30 dni",month:"Ten miesiąc"};
-const SORT={new:"Najnowsze",old:"Najstarsze",name:"Nazwisko A–Z",status:"Etap"};
-function subGroup(s){ const dd=Math.floor((new Date("2026-11-25T23:59:59")-new Date(s.date.replace(" ","T")))/864e5);
-  if(dd<1) return "Dziś"; if(dd<2) return "Wczoraj"; if(dd<3) return "W tym tygodniu"; if(s.date.slice(0,7)==="2026-11") return "Wcześniej w listopadzie"; return "Październik"; }
-function subList(){
-  const q=subF.q.trim().toLowerCase();
-  let l=SUBS.filter(s=>(subF.st==="all"||s.st===subF.st)&&(subF.tpl==="all"||s.tpl===subF.tpl)&&(!q||(person(s.p).n+" "+s.nr+" "+person(s.p).em).toLowerCase().includes(q))&&(!subF.alert||person(s.p).flags.length));
-  if(subF.period!=="all"){ l=l.filter(s=>{ const dd=(NOW-new Date(s.date.replace(" ","T")))/864e5; return subF.period==="month"?s.date.slice(0,7)==="2026-11":dd<=+subF.period; }); }
-  const order=Object.keys(STATUS), last=n=>n.split(" ").slice(-1)[0];
-  l.sort(subF.sort==="old"?(a,b)=>a.date.localeCompare(b.date):subF.sort==="name"?(a,b)=>last(person(a.p).n).localeCompare(last(person(b.p).n),"pl"):subF.sort==="status"?(a,b)=>order.indexOf(a.st)-order.indexOf(b.st)||b.date.localeCompare(a.date):(a,b)=>b.date.localeCompare(a.date));
-  return l;
-}
-function activeFilters(){ const a=[];
-  if(subF.st!=="all") a.push(["st","Etap: "+STATUS[subF.st]]); if(subF.tpl!=="all") a.push(["tpl","Formularz: "+tplName(subF.tpl)]);
-  if(subF.period!=="all") a.push(["period",PERIOD[subF.period]]); if(subF.alert) a.push(["alert","Tylko z alertami"]); if(subF.q) a.push(["q","„"+subF.q+"”"]); return a; }
-function vSubs(){
-  const counts=Object.fromEntries(Object.keys(STATUS).map(k=>[k,SUBS.filter(s=>s.st===k).length]));
-  const list=subList(), af=activeFilters(), grouped=subF.sort==="new"||subF.sort==="old";
-  let rows="", g=null;
-  for(const s of list){
-    if(grouped){ const gg=subGroup(s); if(gg!==g){ g=gg; rows+=`<tr class="grp"><td colspan="6">${esc(gg)}<span>${list.filter(x=>subGroup(x)===gg).length}</span></td></tr>`; } }
-    const p=person(s.p);
-    rows+=`<tr data-sub="${s.nr}" tabindex="0" class="${picked.has(s.nr)?"picked":""}"><td class="ck"><input type="checkbox" data-pick="${s.nr}" ${picked.has(s.nr)?"checked":""} aria-label="Zaznacz ${esc(p.n)}"></td>
-      <td><span class="who"><span class="av sm">${esc(ini(p.n))}</span><span><b>${esc(p.n)}</b><span class="sub mono">${esc(s.nr)}</span></span></span></td><td>${tag(s.tpl)}</td>
-      <td>${fmtD(s.date)}<span class="sub">${esc(ago(s.date))}</span></td><td>${p.flags.length?`<span class="flag ${p.flags.some(f=>f.l==="e")?"e":""}" title="${esc(p.flags.map(f=>f.t).join("; "))}">${p.flags.length} alert</span>`:`<span class="sub">—</span>`}</td><td>${pill(s.st)}</td></tr>`;
-  }
-  return `<div class="page-h"><div><h1>Zgłoszenia</h1><p>Wszystkie formularze wypełnione przez zleceniobiorców, pogrupowane według daty. Kliknij wiersz, aby zobaczyć dane, PDF-y i historię.</p></div>
-    <button class="btn" type="button" data-act="export">${ico("dl")}Eksport do Excela</button></div>
-  <div class="tabs-st" role="tablist" aria-label="Etap">
-    <button role="tab" data-sf="all" aria-selected="${subF.st==="all"}">Wszystkie<span>${SUBS.length}</span></button>
-    ${Object.entries(STATUS).map(([k,v])=>`<button role="tab" data-sf="${k}" aria-selected="${subF.st===k}"><i class="dotc st-${k}"></i>${esc(v)}<span>${counts[k]}</span></button>`).join("")}
-  </div>
+/* ---------- widok: wszystkie umowy ---------- */
+const WHO={emp:"Pracownik",client:"Klient",signer:"Podpisujący",none:"—"};
+function vUmowy(){
+  const q=listF.q.trim().toLowerCase();
+  const list=CASES.filter(c=>(listF.st==="all"||c.st===listF.st)&&(listF.kind==="all"||c.kind===listF.kind)&&(listF.who==="all"||CS[c.st].who===listF.who)&&(!q||(cname(c)+" "+c.nr+" "+(c.c.email||"")+" "+c.t.zakres).toLowerCase().includes(q))).sort((a,b)=>b.changed.localeCompare(a.changed));
+  return `<div class="page-h"><div><h1>Wszystkie umowy</h1><p>Pełna lista spraw. Kliknij wiersz, aby otworzyć sprawę na pulpicie.</p></div><button class="btn action" type="button" data-act="openNew">+ Nowa umowa</button></div>
   <section class="card">
+    <div class="stchips" role="group" aria-label="Filtr statusu">${[["all","Wszystkie",CASES.length],...Object.entries(CS).map(([k,v])=>[k,v.l,CASES.filter(c=>c.st===k).length]).filter(x=>x[2])].map(([k,l,n])=>`<button type="button" class="stchip" data-lst="${k}" aria-pressed="${listF.st===k}">${k!=="all"?`<span aria-hidden="true">${CS[k].ic}</span>`:""}${esc(l)} <span class="n">${n}</span></button>`).join("")}</div>
     <div class="toolbar">
-      <div class="search">${ico("search")}<input id="subQ" type="search" placeholder="Szukaj: nazwisko, e-mail, numer zgłoszenia" value="${esc(subF.q)}" aria-label="Szukaj zgłoszeń"></div>
-      <button class="btn ${filtersOpen||af.filter(x=>x[0]!=="q"&&x[0]!=="st").length?"on":""}" type="button" data-act="toggleFilters" aria-expanded="${filtersOpen}" aria-controls="fpanel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtry${af.filter(x=>x[0]!=="q"&&x[0]!=="st").length?` · ${af.filter(x=>x[0]!=="q"&&x[0]!=="st").length}`:""}</button>
-      <label class="sortl">Sortuj<select class="inp" id="subSort">${Object.entries(SORT).map(([k,v])=>`<option value="${k}" ${subF.sort===k?"selected":""}>${esc(v)}</option>`).join("")}</select></label>
+      <div class="search">${ico("search")}<input id="lQ" type="search" placeholder="Szukaj: klient, numer, e-mail, zakres" value="${esc(listF.q)}" aria-label="Szukaj umów"></div>
+      <select class="inp" id="lKind" style="width:auto" aria-label="Typ"><option value="all">Każdy typ</option>${Object.entries(KIND).map(([k,v])=>`<option value="${k}" ${listF.kind===k?"selected":""}>${esc(v)}</option>`).join("")}</select>
+      <select class="inp" id="lWho" style="width:auto" aria-label="Czyj ruch"><option value="all">Czyj ruch: każdy</option>${["emp","client","signer"].map(k=>`<option value="${k}" ${listF.who===k?"selected":""}>${esc(WHO[k])}</option>`).join("")}</select>
     </div>
-    <div class="fpanel ${filtersOpen?"open":""}" id="fpanel"><div class="fpanel-in"><div class="fgrid4">
-      <label class="lbl">Formularz<select class="inp" id="fTpl"><option value="all">Wszystkie</option>${TPL.filter(t=>t.status!=="szkic").map(t=>`<option value="${t.id}" ${subF.tpl===t.id?"selected":""}>${esc(t.name)}</option>`).join("")}</select></label>
-      <label class="lbl">Okres<select class="inp" id="fPer">${Object.entries(PERIOD).map(([k,v])=>`<option value="${k}" ${subF.period===k?"selected":""}>${esc(v)}</option>`).join("")}</select></label>
-      <label class="lbl">Etap<select class="inp" id="fSt"><option value="all">Wszystkie</option>${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${subF.st===k?"selected":""}>${esc(v)}</option>`).join("")}</select></label>
-      <label class="check" style="align-self:end;min-height:42px"><input type="checkbox" id="fAl" ${subF.alert?"checked":""}> Tylko osoby z alertami</label>
-    </div></div></div>
-    ${af.length?`<div class="afilters">${af.map(([k,v])=>`<button type="button" class="afc" data-clr="${k}" aria-label="Usuń filtr ${esc(v)}">${esc(v)}<span aria-hidden="true">×</span></button>`).join("")}<button type="button" class="btn ghost sm" data-act="clearAll">Wyczyść wszystko</button><span class="muted-s" style="margin-left:auto">${list.length} z ${SUBS.length}</span></div>`:""}
-    ${picked.size?`<div class="bulk"><b>Zaznaczono ${picked.size}</b><label class="sortl">Zmień etap na<select class="inp" id="bulkSt">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join("")}</select></label><button class="btn sm primary" type="button" data-act="bulkApply">Zastosuj</button><button class="btn sm" type="button" data-act="export">Eksportuj zaznaczone</button><button class="btn ghost sm" type="button" data-act="unpick">Odznacz</button></div>`:""}
-    ${list.length?`<div class="tbl-wrap"><table class="subs"><thead><tr><th class="ck"><input type="checkbox" data-pickall aria-label="Zaznacz wszystkie widoczne" ${list.length&&list.every(s=>picked.has(s.nr))?"checked":""}></th><th>Osoba</th><th>Formularz</th><th>Wysłano</th><th>Alerty</th><th>Etap</th></tr></thead><tbody>${rows}</tbody></table></div>`
-      :`<div class="empty"><p style="margin:0 0 10px">Brak zgłoszeń dla tych filtrów.</p><button class="btn sm" type="button" data-act="clearAll">Wyczyść filtry</button></div>`}
+    ${list.length?`<div class="tbl-wrap"><table><thead><tr><th>Kontrahent</th><th>Dokument</th><th>Status</th><th>Czyj ruch</th><th>Ostatnia zmiana</th></tr></thead><tbody>
+      ${list.map(c=>`<tr data-open="${c.id}" tabindex="0"><td><b>${esc(cname(c))}</b><span class="sub mono">${esc(c.nr)}</span></td><td>${esc(KIND[c.kind])}<span class="sub">${esc(tplById(c.tpl).name)}</span></td><td>${badge(c.st)}</td><td>${esc(WHO[CS[c.st].who])}</td><td>${esc(dShort(c.changed))}, ${esc(hm(c.changed))}<span class="sub">${esc(c.changedWhat)}</span></td></tr>`).join("")}
+    </tbody></table></div>`:`<div class="empty"><p style="margin:0 0 10px">Nie znaleziono umów dla tych filtrów.</p><button class="btn sm" type="button" data-act="clearList">Wyczyść filtry</button></div>`}
   </section>`;
 }
-function demoDrawer(s){
-  const p=person(s.p); const groups={}; (s.rows||[]).forEach(([sec,k,v])=>{ (groups[sec]=groups[sec]||[]).push([k,v]); });
-  return drawer(`<div><span class="mono" style="color:var(--muted);font-size:13px">${esc(s.nr)}</span><h2>${esc(p.n)}</h2><p>${esc(tplName(s.tpl))} · wysłano ${fmtD(s.date)} o ${esc(s.date.slice(11))}${s.inv?` · zaproszenie ${esc(s.inv)}`:""}</p></div>`,`
-    <div class="note"><b>Zgłoszenie wysłane z formularza</b> na GitHubie (pokaz). Dane widać tylko w tej przeglądarce. W wersji docelowej zgłoszenia trafią do bazy i zobaczy je cały zespół.</div>
-    <div><p class="sec-t">Etap</p><div class="statusbar">${pill(s.st)}
-      <select class="inp" id="stSel" style="width:auto" aria-label="Zmień etap">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${k===s.st?"selected":""}>${esc(v)}</option>`).join("")}</select>
-      <button class="btn sm primary" type="button" data-act="setStatus" data-nr="${s.nr}">Zmień status</button></div></div>
-    <div><p class="sec-t">Dokumenty (powstaną w wersji docelowej)</p><div class="files">${(s.files||[]).map(f=>`<div class="file"><span class="pdf">PDF</span><div><b>${esc(f)}</b><small>generowanie PDF i podpis w Autenti w wersji docelowej</small></div></div>`).join("")}</div></div>
-    ${Object.entries(groups).map(([sec,rows])=>`<div><p class="sec-t">${esc(sec)}</p><dl class="kv">${rows.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl></div>`).join("")||`<p style="color:var(--muted)">Formularz wysłano bez danych (tryb pokazowy).</p>`}
-    <div><button class="btn sm danger" type="button" data-act="demoDel" data-nr="${s.nr}">Usuń to zgłoszenie z pokazu</button></div>`);
+
+/* ---------- walidacja (reguły jak w formularzu klienta) ---------- */
+function peselOk(p){ if(!/^\d{11}$/.test(p)) return false; const w=[1,3,7,9,1,3,7,9,1,3]; let s=0; for(let i=0;i<10;i++) s+=w[i]*+p[i]; return (10-s%10)%10===+p[10]; }
+function ibanOk(v){ let s=v.replace(/\s/g,"").toUpperCase(); if(/^\d{26}$/.test(s)) s="PL"+s; if(!/^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/.test(s)) return false;
+  const r=(s.slice(4)+s.slice(0,4)).replace(/[A-Z]/g,c=>c.charCodeAt(0)-55); let m=0; for(const ch of r) m=(m*10+ +ch)%97; return m===1; }
+const VAL={
+  email:v=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)?"":"Ten adres e-mail jest niepełny.",
+  tel:v=>v.replace(/\D/g,"").length>=9?"":"Numer telefonu ma za mało cyfr (potrzebny do kodu SMS w Autenti).",
+  pesel:v=>peselOk(v.replace(/\s/g,""))?"":"PESEL jest niepoprawny (błędna cyfra kontrolna).",
+  iban:v=>ibanOk(v)?"":"Numer konta jest niepoprawny. Sprawdź cyfry.",
+  kwota:v=>+v>0?"":"Wpisz kwotę większą od zera.",
+};
+/* definicja ekranu weryfikacji: sekcje i pola (ścieżki w kopii roboczej) */
+const VFIELDS=[
+  {sec:"strony",title:"Strony umowy",fields:[
+    {k:"c.imie",l:"Imię",req:1},{k:"c.nazwisko",l:"Nazwisko",req:1},
+    {k:"c.pesel",l:"PESEL",req:1,v:"pesel",mono:1},{k:"c.adres",l:"Adres zamieszkania",req:1},
+    {k:"c.konto",l:"Numer rachunku",req:1,v:"iban",mono:1,wide:1}]},
+  {sec:"umowa",title:"Umowa",fields:[
+    {k:"kind",l:"Typ umowy",type:"select",opts:Object.entries(KIND)},
+    {k:"t.zakres",l:"Zakres (przedmiot umowy)",req:1,type:"textarea",wide:1},
+    {k:"t.kwota",l:"Wynagrodzenie brutto (zł)",req:1,v:"kwota",type:"number"},
+    {k:"t.miejsce",l:"Miejsce wykonywania",req:0},
+    {k:"t.od",l:"Początek",req:1,type:"date"},{k:"t.do",l:"Koniec",req:1,type:"date"}]},
+  {sec:"podpis",title:"Podpisujący i adresy",fields:[
+    {k:"c.email",l:"E-mail klienta (zaproszenie do podpisu)",req:1,v:"email"},{k:"c.tel",l:"Telefon klienta (kod SMS)",req:1,v:"tel"},
+    {k:"fs.email",l:"E-mail podpisującego z firmy",req:1,v:"email"},{k:"fs.tel",l:"Telefon podpisującego z firmy",req:1,v:"tel"}]},
+];
+const getP=(o,k)=>k.split(".").reduce((a,x)=>a==null?a:a[x],o);
+const setP=(o,k,v)=>{ const ks=k.split("."); let a=o; ks.slice(0,-1).forEach(x=>a=a[x]=a[x]||{}); a[ks[ks.length-1]]=v; };
+const fid=k=>"v-"+k.replace(/\./g,"-");
+const allF=()=>VFIELDS.flatMap(s=>s.fields.map(f=>({...f,sec:s.sec,title:s.title})));
+let VD={}; // kopie robocze weryfikacji (per sprawa) – zachowane przy przechodzeniu między ekranami
+function draftOf(c){ if(!VD[c.id]) VD[c.id]={kind:c.kind,tpl:c.tpl,c:{...c.c},t:{...c.t},fs:{name:OWNER.name,email:OWNER.email,tel:OWNER.tel},orig:JSON.parse(JSON.stringify({kind:c.kind,c:c.c,t:c.t,fs:{name:OWNER.name,email:OWNER.email,tel:OWNER.tel}}))}; return VD[c.id]; }
+function vErrors(d){ const e={};
+  allF().forEach(f=>{ const v=String(getP(d,f.k)??"").trim(); if(f.req&&!v){ e[f.k]="To pole jest wymagane."; return; } if(v&&f.v&&VAL[f.v]){ const m=VAL[f.v](v); if(m) e[f.k]=m; } });
+  if(d.t.od&&d.t.do&&d.t.do<d.t.od) e["t.do"]="Koniec nie może być przed początkiem.";
+  return e; }
+function vChanges(d){ return allF().filter(f=>String(getP(d,f.k)??"")!==String(getP(d.orig,f.k)??"")).map(f=>({l:f.l,was:getP(d.orig,f.k)})); }
+const showVal=(k,v)=>k==="t.kwota"&&v?money(v):k==="kind"?KIND[v]:k.startsWith("t.o")||k==="t.do"?(v?dFull(v):""):v;
+/* treść umowy z szablonu – ten sam szablon i te same dane posłużą do PDF w wersji docelowej */
+function contractHTML(c,d){
+  const F=(k,l)=>{ const v=String(getP(d,k)??"").trim(); return v?`<span class="fv">${esc(showVal(k,v))}</span>`:`<mark class="miss">[brak: ${esc(l)}]</mark>`; };
+  const zl=d.kind==="zl", tp=tplById(d.tpl);
+  const A=zl?"Zleceniodawcą":"Zamawiającym", B=zl?"Zleceniobiorcą":"Wykonawcą";
+  return `<div class="paper contract" aria-label="Podgląd treści umowy">
+    <p class="ctpl">Szablon: ${esc(tp.name)}, wersja ${tp.ver} · wzór roboczy do zastąpienia zatwierdzonym szablonem firmy</p>
+    <h4>${zl?"UMOWA ZLECENIA":"UMOWA O DZIEŁO"} nr ${esc(c.nr)}</h4>
+    <p>zawarta pomiędzy <b>${esc(FIRMA.nazwa)}</b>, NIP ${esc(FIRMA.nip)}, ${esc(FIRMA.adres)}, reprezentowaną przez ${F("fs.name","osoba podpisująca z firmy")}, zwaną dalej ${A},</p>
+    <p>a ${F("c.imie","imię")} ${F("c.nazwisko","nazwisko")}, PESEL ${F("c.pesel","PESEL")}, zam. ${F("c.adres","adres zamieszkania")}, zwanym dalej ${B}.</p>
+    <h5>§ 1. Przedmiot umowy</h5><p>${zl?"Zleceniodawca zleca, a Zleceniobiorca przyjmuje do wykonania":"Wykonawca zobowiązuje się wykonać dzieło"}: ${F("t.zakres","zakres")}.</p>
+    <h5>§ 2. ${zl?"Okres i miejsce wykonywania":"Termin wykonania"}</h5><p>${zl?`Umowa obowiązuje od ${F("t.od","początek")} do ${F("t.do","koniec")}. Miejsce wykonywania: ${String(d.t.miejsce||"").trim()?esc(d.t.miejsce):"wskazane przez Zleceniodawcę"}.`:`Wykonawca rozpocznie pracę ${F("t.od","początek")} i wyda dzieło najpóźniej ${F("t.do","koniec")}.`}</p>
+    <h5>§ 3. Wynagrodzenie</h5><p>Za ${zl?"wykonanie zlecenia":"wykonanie dzieła"} przysługuje wynagrodzenie ${F("t.kwota","wynagrodzenie")} brutto, płatne na rachunek ${F("c.konto","numer rachunku")} w terminie 10 dni od ${zl?"przedstawienia rachunku":"odbioru dzieła"}.</p>
+    <h5>§ 4. Postanowienia końcowe</h5><p>W sprawach nieuregulowanych stosuje się przepisy Kodeksu cywilnego. Umowę podpisują elektronicznie: ${F("c.email","e-mail klienta")} oraz ${esc(OWNER.name)} (${F("fs.email","e-mail firmy")}).</p>
+  </div>`; }
+function vfieldHTML(d,f,errs){
+  const v=getP(d,f.k)??"", id=fid(f.k), err=errs[f.k], ch=String(v)!==String(getP(d.orig,f.k)??"");
+  const inp=f.type==="select"?`<select class="inp" id="${id}" data-vk="${f.k}" ${err?`aria-invalid="true" aria-describedby="${id}-e"`:""}>${f.opts.map(([k,l])=>`<option value="${k}" ${v===k?"selected":""}>${esc(l)}</option>`).join("")}</select>`
+    :f.type==="textarea"?`<textarea class="inp" id="${id}" data-vk="${f.k}" rows="2" ${err?`aria-invalid="true" aria-describedby="${id}-e"`:""}>${esc(v)}</textarea>`
+    :`<input class="inp${f.mono?" mono":""}" id="${id}" data-vk="${f.k}" type="${f.type==="date"?"date":f.type==="number"?"number":"text"}" value="${esc(v)}" ${f.type==="number"?'min="0" step="50" inputmode="decimal"':""} ${err?`aria-invalid="true" aria-describedby="${id}-e"`:""}>`;
+  return `<div class="vf${f.wide?" wide":""}${err?" bad":""}" data-vf="${f.k}"><label for="${id}">${esc(f.l)}${f.req?'<span class="req" aria-hidden="true">*</span>':""}${ch?'<span class="chg">zmieniono</span>':""}</label>${inp}<p class="ferr" id="${id}-e">${err?esc(err):""}</p></div>`; }
+function vSummaryHTML(d,errs){
+  const keys=Object.keys(errs), fs=allF();
+  const ch=vChanges(d);
+  return `${keys.length?`<div class="vsum bad" role="status"><b>${keys.length===1?"Jedno pole do uzupełnienia":`Pola do poprawy: ${keys.length}`} przed wysłaniem do podpisu:</b><ul>${keys.map(k=>{ const f=fs.find(x=>x.k===k); return `<li><a href="#${fid(k)}" data-jump="${fid(k)}">${esc(f.title)} → ${esc(f.l)}</a>: ${esc(errs[k])}</li>`; }).join("")}</ul></div>`
+    :`<div class="vsum ok" role="status"><b>Wszystko gotowe do wysłania.</b> Sprawdź jeszcze treść umowy po prawej stronie.</div>`}
+    ${ch.length?`<div class="vsum chg"><b>Twoje zmiany względem danych od klienta:</b> ${ch.map(x=>`${esc(x.l)} (było: ${esc(showVal(fs.find(f=>f.l===x.l).k,String(x.was??""))||"puste")})`).join("; ")}</div>`:""}`; }
+function consequence(c,d){ const s=signers({...c,c:d.c}); return `Utworzymy PDF z tej wersji i Autenti wyśle umowę do podpisu: <b>${esc(s[0].name)}</b> (${esc(d.c.email||"brak e-maila")}, podpis ${esc(s[0].type)}) oraz <b>${esc(d.fs.name)}</b> – Eskander (podpis ${esc(s[1].type)}).`; }
+let vTab="dane";
+function vWeryf(r){
+  const c=caseById(r.id); if(!c) return `<div class="empty">Nie znaleziono sprawy. <a href="#pulpit">Wróć do pulpitu</a></div>`;
+  const d=draftOf(c), errs=vErrors(d), tp=tplById(d.tpl);
+  const banner=c.st==="blad"?`<div class="callout err" role="alert"><b>Poprzednia wysyłka nie powiodła się:</b> ${esc(c.err)}</div>`:c.st==="odrzucona"?`<div class="callout err"><b>Klient odrzucił poprzednią wersję:</b> ${esc(c.reject)}</div>`:c.st==="zatw_demo"?`<div class="callout"><b>Ta wersja została już zatwierdzona w podglądzie.</b> Możesz ją sprawdzić ponownie.</div>`:"";
+  return `<div class="vhead"><a class="btn ghost sm" href="#sprawa-${c.id}">← Wróć do sprawy</a>
+      <div><p class="eyebrow">${esc(c.nr)} · Weryfikacja przed wysłaniem do podpisu</p><h1>${esc(cname(c))}</h1><p class="lead">${esc(KIND[d.kind])} · szablon „${esc(tp.name)}”, wersja ${tp.ver} · podpis klienta: <b>${esc(tp.sig)}</b></p></div></div>
+    ${banner}
+    <div class="vtabs" role="tablist" aria-label="Weryfikacja"><button role="tab" type="button" data-vtab="dane" aria-selected="${vTab==="dane"}">Dane do sprawdzenia</button><button role="tab" type="button" data-vtab="podglad" aria-selected="${vTab==="podglad"}">Podgląd umowy</button></div>
+    <div class="vgrid" data-tab="${vTab}">
+      <div class="vleft">
+        <div id="vSum">${vSummaryHTML(d,errs)}</div>
+        <div class="vfirm"><b>Strona firmy:</b> ${esc(FIRMA.nazwa)}, NIP ${esc(FIRMA.nip)}, ${esc(FIRMA.adres)} · podpisuje <b>${esc(d.fs.name)}</b> <span class="sub">Dane firmy zmienisz w Ustawieniach.</span></div>
+        ${VFIELDS.map(s=>{ const n=s.fields.filter(f=>errs[f.k]).length; return `<section class="vsec" data-vsec="${s.sec}"><h2>${esc(s.title)} <span class="vb ${n?"bad":"ok"}" data-vb="${s.sec}">${n?`${n} do poprawy`:"✓ kompletne"}</span></h2><div class="vfields">${s.fields.map(f=>vfieldHTML(d,f,errs)).join("")}</div></section>`; }).join("")}
+      </div>
+      <div class="vright"><div class="vprev" id="vPrev">${contractHTML(c,d)}</div></div>
+    </div>
+    <div class="vbar" role="region" aria-label="Zatwierdzenie">
+      <p class="vcons" id="vCons">${consequence(c,d)}</p>
+      <p class="vdemo"><span class="demo-tag">podgląd</span> Integracja z Autenti jeszcze nie działa. Kliknięcie zatwierdzi dane na ekranie, ale <b>nie utworzy PDF i niczego nie wyśle</b>.</p>
+      <div class="vbtns"><a class="btn ghost" href="#sprawa-${c.id}">Wróć bez zatwierdzania</a>
+        <button class="btn action big" type="button" id="vGo" data-act="approve" data-id="${c.id}" ${Object.keys(errs).length?`disabled aria-describedby="vWhy"`:""}>Zatwierdź i wyślij do podpisu</button></div>
+      <p class="vwhy" id="vWhy">${Object.keys(errs).length?`Uzupełnij ${Object.keys(errs).length===1?"1 pole":`${Object.keys(errs).length} pola`} oznaczone na czerwono, aby zatwierdzić.`:""}</p>
+    </div>`;
 }
-function subDrawer(nr){
-  { const ds=SUBS.find(x=>x.nr===nr); if(ds&&ds.demo) return demoDrawer(ds); }
-  const s=SUBS.find(x=>x.nr===nr), p=person(s.p);
-  const hist=[["Zgłoszenie wysłane przez "+p.n,s.date],["Mail z PDF-ami do księgowości i do "+p.n,s.date]];
-  if(s.st!=="nowe") hist.push(["Status: W weryfikacji (Dział Kadr)",s.date.slice(0,10)+" 12:10"]);
-  if(s.st==="popr") hist.push(["Status: Do poprawy, mail z prośbą do osoby",s.date.slice(0,10)+" 12:14"]);
-  if(s.st==="umowa"||s.st==="arch") hist.push(["Status: Umowa przygotowana",s.date.slice(0,10)+" 15:02"]);
-  if(s.st==="arch") hist.push(["Status: Zarchiwizowane","—"]);
-  return drawer(`<div><span class="mono" style="color:var(--muted);font-size:13px">${esc(s.nr)}</span><h2>${esc(p.n)}</h2><p>${esc(tplName(s.tpl))} · wysłano ${fmtD(s.date)} o ${esc(s.date.slice(11))}</p></div>`,`
-    <div><p class="sec-t">Status</p><div class="statusbar">${pill(s.st)}
-      <select class="inp" id="stSel" style="width:auto" aria-label="Zmień status">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${k===s.st?"selected":""}>${esc(v)}</option>`).join("")}</select>
-      <button class="btn sm primary" type="button" data-act="setStatus" data-nr="${s.nr}">Zmień status</button></div>
-      <p style="color:var(--muted);font-size:12.5px;margin:8px 0 0">„Do poprawy” wysyła osobie mail z prośbą i linkiem do poprawienia danych.</p></div>
-    ${s.note?`<div class="note w">${esc(s.note)}</div>`:""}
-    <div><p class="sec-t">Dokumenty</p>
-      ${s.st==="podpis"?`<div class="note sig-wait"><b>Wysłano do podpisu w Autenti</b> ${fmtD(s.date)} o ${esc(s.date.slice(11))}. ${esc(p.n)} podpisuje kodem SMS. Po podpisie dokumenty wrócą tu same, a zgłoszenie przejdzie do etapu „Nowe”.<div style="margin-top:8px"><button class="btn sm" type="button" data-act="sigRemind">Przypomnij o podpisie</button></div></div>`:""}
-      <div class="files">${s.files.map(f=>`<div class="file"><span class="pdf">PDF</span><div><b>${esc(f)}_${esc(p.n.split(" ")[1]||p.n)}.pdf</b><small>${s.st==="podpis"?"czeka na podpis":`<span class="au">✓ Autenti</span> podpisano ${fmtD(s.date)}, kod SMS`}</small></div><button class="btn sm" type="button" data-act="pdf" ${s.st==="podpis"?"disabled":""}>Pobierz</button></div>`).join("")}</div></div>
-    <div><p class="sec-t">Dane z formularza</p><dl class="kv">
-      <dt>Imię i nazwisko</dt><dd>${esc(p.n)}</dd><dt>PESEL</dt><dd class="mono">${esc(maskPesel(p.pesel))} <button class="btn ghost sm" type="button" data-act="reveal" data-v="${esc(p.pesel||"brak numeru PESEL")}">Pokaż</button></dd>
-      <dt>Data urodzenia</dt><dd>${fmtD(p.ur)}</dd><dt>E-mail</dt><dd>${esc(p.em)}</dd><dt>Miejscowość</dt><dd>${esc(p.city)}</dd>
-      <dt>Urząd skarbowy</dt><dd>Urząd Skarbowy Kraków-Krowodrza</dd><dt>Rachunek</dt><dd class="mono">•• •••• •••• •••• •••• •••• 2874</dd>
-      ${s.tpl==="zl"?`<dt>Ubezpieczenia</dt><dd>${p.student?"Nie podlegam (student przed 26. r.ż.)":p.emeryt?"Podlegam obowiązkowo (emeryt)":"Podlegam obowiązkowo, bez chorobowego"}</dd><dt>PIT-2</dt><dd>${s.files.includes("PIT-2")?"Tak, 1/12 kwoty zmniejszającej":"Nie składa"}</dd>`:""}
-    </dl><p style="color:var(--muted);font-size:12.5px;margin:8px 0 0">PESEL i numer konta są ukryte do czasu kliknięcia „Pokaż”. Każde odsłonięcie zapisuje się w dzienniku zdarzeń.</p></div>
-    <div><p class="sec-t">Notatka wewnętrzna</p><textarea class="inp" id="noteTxt" placeholder="Widoczna tylko dla zespołu, np. „umowa do podpisu w poniedziałek”"></textarea><div style="margin-top:8px"><button class="btn sm" type="button" data-act="note">Zapisz notatkę</button></div></div>
-    <div><p class="sec-t">Historia</p><ul class="timeline">${hist.map(([t,d])=>`<li>${esc(t)}<small>${esc(d)}</small></li>`).join("")}</ul></div>
-    <div><a class="btn ghost sm" href="#kartoteka" data-person="${p.id}">Otwórz kartę osoby w kartotece →</a></div>`);
+function refreshVerify(id){ // odświeża błędy, podgląd i przycisk bez przerysowania pól (fokus zostaje)
+  const c=caseById(id), d=draftOf(c), errs=vErrors(d), n=Object.keys(errs).length;
+  allF().forEach(f=>{ const w=document.querySelector(`[data-vf="${f.k}"]`); if(!w) return; const e=errs[f.k], inp=w.querySelector("[data-vk]");
+    w.classList.toggle("bad",!!e); w.querySelector(".ferr").textContent=e||""; if(e){ inp.setAttribute("aria-invalid","true"); inp.setAttribute("aria-describedby",inp.id+"-e"); } else { inp.removeAttribute("aria-invalid"); inp.removeAttribute("aria-describedby"); }
+    const ch=String(getP(d,f.k)??"")!==String(getP(d.orig,f.k)??""), lab=w.querySelector("label"), tagEl=lab.querySelector(".chg"); if(ch&&!tagEl) lab.insertAdjacentHTML("beforeend",'<span class="chg">zmieniono</span>'); if(!ch&&tagEl) tagEl.remove(); });
+  VFIELDS.forEach(s=>{ const b=document.querySelector(`[data-vb="${s.sec}"]`), k=s.fields.filter(f=>errs[f.k]).length; if(b){ b.className="vb "+(k?"bad":"ok"); b.textContent=k?`${k} do poprawy`:"✓ kompletne"; } });
+  $("#vSum").innerHTML=vSummaryHTML(d,errs); $("#vPrev").innerHTML=contractHTML(c,d); $("#vCons").innerHTML=consequence(c,d);
+  const go=$("#vGo"); go.disabled=!!n; if(n) go.setAttribute("aria-describedby","vWhy"); else go.removeAttribute("aria-describedby");
+  $("#vWhy").textContent=n?`Uzupełnij ${n===1?"1 pole":`${n} pola`} oznaczone na czerwono, aby zatwierdzić.`:"";
 }
 
-let invOpen=false, lastLink=null;
-const FORM_URL="https://igor1427.github.io/formularz-eskander/";
-function vInv(){
-  const form=`<section class="card" id="invForm"><div class="card-h"><h2>Wyślij link do formularza</h2><button class="x" type="button" data-act="closeInv" aria-label="Zamknij">×</button></div><div class="card-b">
-    <form class="fgrid" id="invF" novalidate>
-      <label class="lbl">Imię i nazwisko<input class="inp" id="invN" required placeholder="np. Jan Kowalski"></label>
-      <label class="lbl">E-mail<input class="inp" id="invE" type="email" required placeholder="jan@example.com"></label>
-      <label class="lbl">Formularz<select class="inp" id="invT">${TPL.filter(t=>t.status!=="szkic").map(t=>`<option value="${t.id}">${esc(t.name)} (wersja ${t.ver})</option>`).join("")}</select></label>
-      <label class="lbl">Link ważny przez<select class="inp" id="invX"><option>7 dni</option><option selected>14 dni</option><option>30 dni</option></select></label>
-      <label class="check full"><input type="checkbox" id="invR" checked> Wyślij automatyczne przypomnienia po 3 i 7 dniach, jeśli formularz nie zostanie wypełniony</label>
-      <label class="check full"><input type="checkbox" id="invP" checked> Jeśli osoba jest w kartotece, wypełnij formularz jej ostatnimi danymi (osoba tylko je potwierdza)</label>
-      <label class="lbl full">Wiadomość <small>(opcjonalnie, dopisana do maila)</small><textarea class="inp" id="invM" placeholder="np. Prosimy o wypełnienie do piątku."></textarea></label>
-      <p class="err full" id="invErr" style="color:var(--err);margin:0;font-size:13px" hidden></p>
-      <div class="full" style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" type="button" data-act="closeInv">Anuluj</button><button class="btn primary" type="submit">${ico("send")}Wyślij link</button></div>
-    </form>
-    ${lastLink?`<div class="note" style="margin-top:14px"><p style="margin:0 0 8px"><b>Link dla ${esc(lastLink.n)} jest gotowy.</b> Otwórz wiadomość w swoim programie pocztowym i kliknij Wyślij. Możesz też skopiować link lub całą treść maila.</p>
-      <div class="linkbox"><code id="lnk">${esc(lastLink.url)}</code><button class="btn sm" type="button" data-act="copy">Kopiuj link</button></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><a class="btn primary sm" id="mailtoBtn" href="${esc(lastLink.mailto)}">${ico("send")}Otwórz w poczcie</a><button class="btn sm" type="button" data-act="copyMail">Kopiuj treść maila</button><a class="btn ghost sm" href="${esc(lastLink.url)}" target="_blank" rel="noopener">Podejrzyj formularz</a></div>
-      <pre id="mailTxt" hidden>${esc("Temat: "+lastLink.subject+"\n\n"+lastLink.body)}</pre></div>`:""}
-  </div></section>`;
-  return `<div class="page-h"><div><h1>Wysyłanie linków</h1><p>Każda osoba dostaje własny link z terminem ważności. Widać, kto otworzył formularz, na którym jest kroku i kto już wysłał.</p></div>
-    ${invOpen?"":`<button class="btn primary" type="button" data-act="newInv">${ico("plus")}Nowy link</button>`}</div>
-  <div style="display:grid;gap:18px">${invOpen?form:""}
-  <section class="card"><div class="tbl-wrap"><table><thead><tr><th>Osoba</th><th>Formularz</th><th>Wysłano</th><th>Postęp</th><th>Status</th><th></th></tr></thead><tbody>
-    ${INV.map(i=>`<tr style="cursor:default"><td><b>${esc(i.n)}</b><span class="sub">${esc(i.em)}</span></td><td>${tag(i.tpl)}</td><td>${fmtD(i.sent)}<span class="sub">ważny do ${fmtD(i.exp)}</span></td>
-      <td><span class="steps-mini" aria-label="Krok ${i.step} z 8">${Array.from({length:8},(_,k)=>`<i class="${k<i.step?"on":""}"></i>`).join("")}</span><span class="sub">${i.st==="wypelnione"?"wysłany":i.step?`krok ${i.step} z 8`:"nieotwarty"}${i.rem?` · ${i.rem} przypomn.`:""}</span></td>
-      <td>${pill(i.st,ISTATUS)}</td>
-      <td style="white-space:nowrap">${i.st==="wypelnione"?`<a class="btn ghost sm" href="#zgloszenia">Zgłoszenie</a>`:i.st==="wygasle"?`<button class="btn sm" type="button" data-act="resend" data-id="${i.id}">Wyślij ponownie</button>`:`<button class="btn ghost sm" type="button" data-act="remind" data-id="${i.id}">Przypomnij</button>`}</td></tr>`).join("")}
-  </tbody></table></div></section></div>`;
-}
+/* ---------- widok: nowa umowa ---------- */
+let NF=null;
+function newForm(fromCase){ const c=fromCase&&caseById(fromCase);
+  NF=c?{caseId:c.id,kind:c.kind,tpl:c.tpl,person:"",email:c.c.email,imie:c.c.imie,nazwisko:c.c.nazwisko,zakres:c.t.zakres,kwota:c.t.kwota,od:c.t.od,do:c.t.do,err:{}}
+      :{caseId:null,kind:"zl",tpl:"zl-std",person:"",email:"",imie:"",nazwisko:"",zakres:"",kwota:"",od:"",do:"",err:{}}; }
+const COMPLETE=new Set(["p2","p5","p7"]); // kontrahenci z kompletnymi i aktualnymi danymi (przykład)
+function vNowa(){
+  if(!NF) newForm();
+  const e=NF.err, tpls=TEMPLATES.filter(t=>t.kind===NF.kind), complete=NF.person&&COMPLETE.has(NF.person);
+  const fe=k=>e[k]?`<p class="ferr" id="nf-${k}-e">${esc(e[k])}</p>`:"";
+  const inv=k=>e[k]?`aria-invalid="true" aria-describedby="nf-${k}-e"`:"";
+  return `<div class="vhead"><a class="btn ghost sm" href="#pulpit">← Pulpit</a><div><p class="eyebrow">${NF.caseId?"Dokończ szkic":"Nowa sprawa"}</p><h1>Nowa umowa</h1><p class="lead">Wybierz typ i szablon, wskaż kontrahenta i wpisz warunki. Klient uzupełni resztę w formularzu.</p></div></div>
+  <form class="nform" id="nForm" novalidate>
+    <section class="card nsec"><h2>1. Typ umowy i szablon</h2>
+      <div class="kinds" role="radiogroup" aria-label="Typ umowy">${Object.entries(KIND).map(([k,v])=>`<button type="button" class="kind ${NF.kind===k?"sel":""}" role="radio" aria-checked="${NF.kind===k}" data-nkind="${k}"><h3>${esc(v)}</h3><small>${k==="zl"?"usługi wykonywane w okresie, z ZUS zależnie od oświadczenia":"konkretny rezultat (dzieło), bez ZUS"}</small></button>`).join("")}
+        <div class="kind dis" aria-disabled="true"><h3>Kolejne typy</h3><small>pojawią się, gdy firma zatwierdzi szablony</small></div></div>
+      <label class="lbl">Szablon (tylko zatwierdzone wersje)<select class="inp" id="nTpl">${tpls.map(t=>`<option value="${t.id}" ${NF.tpl===t.id?"selected":""}>${esc(t.name)} · wersja ${t.ver} · podpis ${esc(t.sig)}</option>`).join("")}</select></label></section>
+    <section class="card nsec"><h2>2. Kontrahent</h2>
+      <label class="lbl">Wybierz z kartoteki <small>(albo wpisz nowego poniżej)</small><select class="inp" id="nPerson"><option value="">— nowy kontrahent —</option>${PEOPLE.filter(p=>!p.demo).map(p=>`<option value="${p.id}" ${NF.person===p.id?"selected":""}>${esc(p.n)} · ${esc(p.em)}</option>`).join("")}</select></label>
+      ${complete?`<div class="callout ok"><b>Mamy aktualne dane tej osoby</b> (potwierdzone ${esc(dLong(PEOPLE.find(p=>p.id===NF.person).last))}). Możesz pominąć formularz — sprawa i tak przejdzie obowiązkową weryfikację.</div>`:""}
+      <div class="fgrid"><label class="lbl">Imię<input class="inp" id="nImie" value="${esc(NF.imie)}"></label><label class="lbl">Nazwisko<input class="inp" id="nNazw" value="${esc(NF.nazwisko)}"></label>
+      <div class="full"><label class="lbl" for="nEmail">E-mail kontrahenta <span class="req">*</span></label><input class="inp" id="nEmail" type="email" value="${esc(NF.email)}" ${inv("email")}>${fe("email")}</div></div></section>
+    <section class="card nsec"><h2>3. Warunki (wpisuje firma)</h2>
+      <div class="fgrid"><div class="full"><label class="lbl" for="nZakres">Zakres <span class="req">*</span></label><textarea class="inp" id="nZakres" rows="2" ${inv("zakres")}>${esc(NF.zakres)}</textarea>${fe("zakres")}</div>
+      <div><label class="lbl" for="nKwota">Wynagrodzenie brutto (zł) <span class="req">*</span></label><input class="inp" id="nKwota" type="number" min="0" step="50" inputmode="decimal" value="${esc(NF.kwota)}" ${inv("kwota")}>${fe("kwota")}</div>
+      <div></div>
+      <div><label class="lbl" for="nOd">Początek <span class="req">*</span></label><input class="inp" id="nOd" type="date" value="${esc(NF.od)}" ${inv("od")}>${fe("od")}</div>
+      <div><label class="lbl" for="nDo">Koniec <span class="req">*</span></label><input class="inp" id="nDo" type="date" value="${esc(NF.do)}" ${inv("do")}>${fe("do")}</div></div>
+      <p class="sub" style="margin:10px 0 0">Opiekun i podpisujący po stronie firmy: <b>${esc(OWNER.name)}</b>.</p></section>
+    <div class="vbar">
+      <p class="vdemo"><span class="demo-tag">podgląd</span> E-maile jeszcze nie są wysyłane. Sprawa zostanie zapisana na pulpicie, a link do formularza będzie do skopiowania.</p>
+      <div class="vbtns">${complete?`<button class="btn" type="button" data-act="skipForm">Przejdź do weryfikacji bez formularza</button>`:""}<button class="btn action big" type="submit">Wyślij formularz</button></div>
+    </div>
+  </form>`; }
 
 let pplQ="";
 function vPeople(){
@@ -783,13 +1169,13 @@ function vPeople(){
     ${p.flags.map(f=>`<span class="flag ${f.l==="e"?"e":""}">${f.l==="e"?"!":"⏱"} ${esc(f.t)}</span>`).join("")}</button>`).join("")||`<div class="empty">Nikogo nie znaleziono.</div>`}</div></section>`;
 }
 function personDrawer(id){
-  const p=person(id), subs=SUBS.filter(s=>s.p===id);
+  const p=person(id), cs=CASES.filter(c=>c.p===id);
   return drawer(`<div style="display:flex;gap:12px;align-items:center"><div class="av" style="width:46px;height:46px;font-size:15px">${esc(ini(p.n))}</div><div><h2>${esc(p.n)}</h2><p>${esc(p.em)}</p></div></div>`,`
-    ${p.flags.length?`<div style="display:grid;gap:8px">${p.flags.map(f=>`<div class="note ${f.l==="e"?"":"w"}" style="${f.l==="e"?"background:var(--err-soft);color:var(--err)":""}"><b>${esc(f.t)}</b>${f.t.includes("26 lat")?"<br>Od tego dnia umowa zlecenia podlega składkom ZUS. Przypomnimy 30 dni wcześniej.":f.t.includes("Karta")?"<br>Poproś o nowy dokument przed końcem ważności.":f.t.includes("PIT-2")?"<br>Wyślij formularz PIT-2 na nowy rok.":""}</div>`).join("")}</div>`:""}
-    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary sm" type="button" data-act="invPerson" data-id="${p.id}">${ico("send")}Wyślij formularz (wstępnie wypełniony)</button><button class="btn sm" type="button" data-act="askUpdate">Poproś o aktualizację danych</button></div>
+    ${p.flags.length?`<div style="display:grid;gap:8px">${p.flags.map(f=>`<div class="callout ${f.l==="e"?"err":"warn"}"><b>${esc(f.t)}</b>${f.t.includes("26 lat")?"<br>Od tego dnia umowa zlecenia podlega składkom ZUS.":f.t.includes("Karta")?"<br>Poproś o nowy dokument przed końcem ważności.":f.t.includes("PIT-2")?"<br>Wyślij formularz PIT-2 na nowy rok.":""}</div>`).join("")}</div>`:""}
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn action sm" type="button" data-act="invPerson" data-id="${p.id}">+ Nowa umowa dla tej osoby</button></div>
     <div><p class="sec-t">Aktualne dane</p><dl class="kv"><dt>PESEL</dt><dd class="mono">${p.demo?"w zgłoszeniu":esc(maskPesel(p.pesel))}</dd><dt>Data urodzenia</dt><dd>${fmtD(p.ur)}</dd><dt>Miejscowość</dt><dd>${esc(p.city)}</dd><dt>Status</dt><dd>${p.student?"Student (do 26. r.ż.)":p.emeryt?"Emeryt":"—"}</dd><dt>Dane potwierdzone</dt><dd>${fmtD(p.last)}</dd></dl></div>
-    <div><p class="sec-t">Zgłoszenia i umowy</p>${subs.length?`<div class="files">${subs.map(s=>`<div class="file" style="cursor:pointer" data-sub="${s.nr}"><span class="pdf">${s.files.length}</span><div><b>${esc(tplName(s.tpl))}</b><small class="mono">${esc(s.nr)} · ${fmtD(s.date)}</small></div>${pill(s.st)}</div>`).join("")}</div>`:`<p style="color:var(--muted)">Brak zgłoszeń w przykładowych danych.</p>`}</div>
-    <div><p class="sec-t">Przechowywanie danych</p><p style="margin:0;font-size:13.5px;color:var(--muted)">Dane osobowe usuwane automatycznie 5 lat po końcu roku, w którym zakończyła się ostatnia umowa (do ustalenia z Działem Kadr).</p></div>`);
+    <div><p class="sec-t">Sprawy umów</p>${cs.length?`<div class="files">${cs.map(c=>`<a class="file" style="text-decoration:none;color:inherit" href="#sprawa-${c.id}"><div><b>${esc(KIND[c.kind])}</b><small class="mono">${esc(c.nr)} · ${esc(dShort(c.changed))}</small></div>${badge(c.st)}</a>`).join("")}</div>`:`<p style="color:var(--muted);margin:0">Brak spraw w przykładowych danych.</p>`}</div>
+    <div><p class="sec-t">Przechowywanie danych</p><p style="margin:0;font-size:13.5px;color:var(--muted)">Dane osobowe usuwane automatycznie po okresie przechowywania (do ustalenia z Działem Kadr).</p></div>`);
 }
 
 let tplSel="zl", fldSel=null, tplQ="", tplF="all";
@@ -841,9 +1227,9 @@ function vSettings(){
     <section class="card"><div class="card-h"><h2>RODO i przechowywanie</h2></div><div class="card-b" style="display:grid;gap:12px">
       <label class="lbl">Usuwaj dane osobowe po<select class="inp"><option>5 latach od końca roku ostatniej umowy</option><option>10 latach</option></select></label>
       <label class="lbl">Klauzula informacyjna<textarea class="inp">Administratorem danych jest [Eskander]… (treść dostarczy Dział Kadr)</textarea></label></div></section>
-    <section class="card" style="grid-column:1/-1"><div class="card-h"><h2>Podpis elektroniczny (Autenti)</h2><span class="pill st-otwarte">Niepołączone</span></div><div class="card-b fgrid">
-      <p class="full" style="margin:0;font-size:13.5px;color:var(--muted)">Po wysłaniu formularza dokumenty trafiają automatycznie do Autenti, a osoba podpisuje je kodem SMS. Połączenie wymaga planu Autenti z dostępem do API.</p>
-      <label class="lbl">Klucz API Autenti<input class="inp" type="password" placeholder="wklej klucz z panelu Autenti" autocomplete="off"></label>
+    <section class="card" style="grid-column:1/-1"><div class="card-h"><h2>Podpis elektroniczny (Autenti)</h2><span class="sbadge t-warn"><span class="si" aria-hidden="true">!</span>Niepołączone</span></div><div class="card-b fgrid">
+      <p class="full" style="margin:0;font-size:13.5px;color:var(--muted)">Umowa trafia do Autenti dopiero po sprawdzeniu danych i kliknięciu „Zatwierdź i wyślij do podpisu”. Połączenie wymaga planu Autenti z dostępem do API. Do czasu połączenia zatwierdzenie działa tylko jako podgląd.</p>
+      <p class="lbl" style="margin:0">Klucz API Autenti<small>Klucz wpisze administrator po stronie serwera – nigdy w przeglądarce ani w e-mailu.</small></p>
       <label class="lbl">Rodzaj podpisu<select class="inp"><option>Zwykły / zaawansowany (kod SMS)</option><option>Kwalifikowany (płatny dodatek)</option></select></label>
       <div class="full" style="display:grid;gap:8px"><span class="lbl" style="display:block">Podpisywane dokumenty</span>
         <label class="check"><input type="checkbox" checked> Oświadczenie zleceniobiorcy / wykonawcy dzieła</label>
@@ -855,7 +1241,7 @@ function vSettings(){
     </div></section>
     <section class="card"><div class="card-h"><h2>Wygląd</h2></div><div class="card-b" style="display:grid;gap:10px">
       <p style="margin:0;font-size:13.5px;color:var(--muted)">Kolejność zakładek w menu ustawiasz, przeciągając je myszką. Tutaj możesz wrócić do kolejności domyślnej.</p>
-      <div><button class="btn sm" type="button" data-act="navReset">Przywróć domyślną kolejność menu</button></div></div></section>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" type="button" data-act="navReset">Przywróć domyślną kolejność menu</button><button class="btn sm" type="button" data-act="tourAgain">Pokaż przewodnik ponownie</button></div></div></section>
     <section class="card"><div class="card-h"><h2>Dziennik zdarzeń</h2></div><div class="card-b"><ul class="timeline">
       <li>Dział Kadr pobrał PDF: Oświadczenie_zleceniobiorcy_Nowak.pdf<small>25.11.2026 08:14</small></li>
       <li>Igor T. odsłonił PESEL w zgłoszeniu ZL-20261124-1435<small>24.11.2026 22:50</small></li>
@@ -873,114 +1259,224 @@ function closeDrawer(){ const root=$("#drawerRoot"); if(!root.innerHTML) return;
   if(REDUCED||!dr){ root.innerHTML=""; } else { dr.classList.add("out"); bg&&bg.classList.add("out"); setTimeout(()=>{ if(dr.classList.contains("out")) root.innerHTML=""; },200); }
   lastFocus&&lastFocus.focus&&lastFocus.focus({preventScroll:true}); }
 
+/* ---------- okna dialogowe (potwierdzenia w trybie podglądu) ---------- */
+function openModal(title,body){ const root=$("#drawerRoot"); if(!root.innerHTML) lastFocus=document.activeElement;
+  root.innerHTML=`<div class="drawer-bg" data-act="closeDrawer"></div><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mT"><div class="modal-h"><h2 id="mT">${title}</h2><button class="x" type="button" data-act="closeDrawer" aria-label="Zamknij">×</button></div><div class="modal-b">${body}</div></div>`;
+  const f=root.querySelector(".modal [data-autofocus]")||root.querySelector(".modal .x"); f&&f.focus({preventScroll:true}); }
+const pad=x=>String(x).padStart(2,"0");
+function stamp(){ const t=new Date(); return `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())} ${pad(t.getHours())}:${pad(t.getMinutes())}`; }
+const isoDay=t=>`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
+function formLink(c){ const q=new URLSearchParams({imie:c.c.imie||"",nazwisko:c.c.nazwisko||"",email:c.c.email||"",umowa:c.kind==="dz"?"dzielo":"zlecenie",nr:c.nr}); return FORM_URL+"?"+q.toString(); }
+function copyText(txt,ok){ (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast(ok)).catch(()=>toast("Nie udało się skopiować. Zaznacz link i skopiuj ręcznie.")); }
+function nextNr(){ const n=Math.max(...CASES.map(c=>+(String(c.nr).match(/(\d{4})$/)||[0,0])[1]))+1; return "UM/2026/"+String(n).padStart(4,"0"); }
+/* komunikaty akcji, które w wersji docelowej wysyłają coś na zewnątrz – tu nic nie wysyłają */
+const DEMO_MSG={
+  remind:"Podgląd: przypomnienie NIE zostało wysłane. W wersji docelowej klient dostanie e-mail z tym samym linkiem.",
+  revoke:"Podgląd: link nie został unieważniony. W wersji docelowej stary link przestanie działać.",
+  resendInvite:"Podgląd: nowy link NIE został wysłany. W wersji docelowej klient dostanie e-mail z nowym linkiem.",
+  checkState:"Podgląd: Autenti nie zostało odpytane. W wersji docelowej system sprawdzi stan wysyłki po numerze procesu.",
+  remindSign:"Podgląd: Autenti nie wysłało przypomnienia. W wersji docelowej przypomnienie wyśle Autenti.",
+  withdraw:"Podgląd: umowa nie została wycofana z Autenti.",
+  download:"Podgląd: podpisany PDF powstanie dopiero po połączeniu z Autenti.",
+};
+
+/* ---------- nawigacja i trasy ---------- */
+function route(){ const h=decodeURIComponent(location.hash.slice(1));
+  let m;
+  if((m=h.match(/^sprawa-(.+)$/))) return {v:"pulpit",id:m[1],nav:"pulpit"};
+  if((m=h.match(/^weryfikacja-(.+)$/))) return {v:"weryfikacja",id:m[1],nav:"pulpit"};
+  if(h==="nowa") return {v:"nowa",nav:"pulpit"};
+  const v=VIEWS.find(x=>x.id===h&&(!x.show||x.show()));
+  return {v:v?v.id:"pulpit",nav:v?v.id:"pulpit"}; }
+
 /* ---------- render ---------- */
 const REDUCED=matchMedia("(prefers-reduced-motion: reduce)").matches;
+let lastRoute="";
 function render(){
   renderNav();
-  const v=current();
-  const html={start:vStart,zgloszenia:vSubs,zaproszenia:vInv,kartoteka:vPeople,kreator:vBuilder,ustawienia:vSettings}[v]();
+  const r=route();
+  const html={pulpit:vPulpit,umowy:vUmowy,weryfikacja:vWeryf,nowa:vNowa,kartoteka:vPeople,kreator:vBuilder,ustawienia:vSettings}[r.v](r);
   $("#main").innerHTML=html;
+  document.body.dataset.view=r.v+(r.id&&isMobile()&&r.v==="pulpit"?"-detail":"");
 }
-function renderView(){ // zmiana karty: łagodne przenikanie zamiast przeskoku
-  const run=()=>{ render(); window.scrollTo(0,0); };
+function renderView(){ // zmiana ekranu: łagodne przenikanie zamiast przeskoku
+  const run=()=>{ render();
+    if(pendingScroll!=null){ const y=pendingScroll; pendingScroll=null; requestAnimationFrame(()=>window.scrollTo(0,y)); } else window.scrollTo(0,0); };
   if(REDUCED){ run(); return; }
   if(document.startViewTransition){ document.startViewTransition(run); return; }
   run(); const m=$("#main"); m.classList.remove("view-in"); void m.offsetWidth; m.classList.add("view-in");
 }
-window.addEventListener("hashchange",()=>{ closeDrawer(); renderView(); $("#main").focus({preventScroll:true}); });
+window.addEventListener("hashchange",()=>{ closeDrawer(); const r=route();
+  // na komputerze przełączanie spraw na pulpicie nie przewija ani nie przerysowuje kolejki
+  if(r.v==="pulpit"&&r.id&&!isMobile()&&document.body.dataset.view==="pulpit"&&caseById(r.id)){ selectCase(r.id); return; }
+  renderView(); maybeTour();
+  const h=$("#main h1, #main h2#dName"); (h||$("#main")).setAttribute("tabindex","-1"); (h||$("#main")).focus({preventScroll:true}); });
+function selectCase(id){ selId=id; document.querySelectorAll(".qrow").forEach(b=>b.setAttribute("aria-current",String(b.dataset.case===id)));
+  const d=$("#detail"); if(d){ d.innerHTML=detailHTML(caseById(id),false); if(!REDUCED){ d.classList.remove("view-in"); void d.offsetWidth; d.classList.add("view-in"); } } }
 
 document.addEventListener("click",e=>{
   const t=e.target;
-  const gf=t.closest("[data-goflt]"); if(gf){ subF={...subF,st:gf.dataset.goflt,q:""}; location.hash="zgloszenia"; return; }
-  const dh=t.closest("[data-href]"); if(dh){ location.hash=dh.dataset.href.slice(1); return; }
-  const pk=t.closest("[data-pick]"); if(pk){ e.stopPropagation(); pk.checked?picked.add(pk.dataset.pick):picked.delete(pk.dataset.pick); render(); return; }
-  const pa=t.closest("[data-pickall]"); if(pa){ const l=subList(); if(pa.checked) l.forEach(s=>picked.add(s.nr)); else l.forEach(s=>picked.delete(s.nr)); render(); return; }
-  if(t.closest("td.ck")){ return; }
-  const cl=t.closest("[data-clr]"); if(cl){ const k=cl.dataset.clr; subF[k]=k==="alert"?false:k==="q"?"":"all"; render(); return; }
+  const qr=t.closest("[data-case]"); if(qr){ const id=qr.dataset.case;
+    if(isMobile()){ pulpitScroll=window.scrollY; location.hash="sprawa-"+id; }
+    else { history.replaceState(null,"","#sprawa-"+id); selectCase(id); }
+    return; }
+  const op=t.closest("[data-open]"); if(op){ location.hash="sprawa-"+op.dataset.open; return; }
+  const ls=t.closest("[data-lst]"); if(ls){ listF.st=ls.dataset.lst; render(); const b=$(`[data-lst="${ls.dataset.lst}"]`); b&&b.focus(); return; }
+  const vt=t.closest("[data-vtab]"); if(vt){ vTab=vt.dataset.vtab; const g=$(".vgrid"); g.dataset.tab=vTab; document.querySelectorAll("[data-vtab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.vtab===vTab))); window.scrollTo({top:$(".vtabs").offsetTop-70}); return; }
+  const jp=t.closest("[data-jump]"); if(jp){ e.preventDefault(); if(vTab!=="dane"){ vTab="dane"; $(".vgrid").dataset.tab="dane"; document.querySelectorAll("[data-vtab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.vtab==="dane"))); }
+    const f=document.getElementById(jp.dataset.jump); if(f){ f.scrollIntoView({block:"center",behavior:REDUCED?"auto":"smooth"}); f.focus({preventScroll:true}); } return; }
+  const nk=t.closest("[data-nkind]"); if(nk){ syncNF(); NF.kind=nk.dataset.nkind; NF.tpl=TEMPLATES.find(x=>x.kind===NF.kind).id; const y=scrollY; render(); window.scrollTo(0,y); const b=$(`[data-nkind="${NF.kind}"]`); b&&b.focus(); return; }
   const tf2=t.closest("[data-tf]"); if(tf2){ tplF=tf2.dataset.tf; render(); return; }
   const pp=t.closest("[data-person]"); if(pp){ e.preventDefault(); openDrawer(personDrawer(pp.dataset.person)); return; }
-  const sr=t.closest("[data-sub]"); if(sr){ openDrawer(subDrawer(sr.dataset.sub)); return; }
-  const sf=t.closest("[data-sf]"); if(sf){ subF.st=sf.dataset.sf; picked.clear(); render(); return; }
   const tp=t.closest("[data-tpl]"); if(tp){ tplSel=tp.dataset.tpl; fldSel=null; render(); return; }
   const mv=t.closest("[data-mv]"); if(mv){ e.stopPropagation(); const [si,fi,d]=mv.dataset.mv.split(":").map(Number); const arr=TPL.find(x=>x.id===tplSel).sections[si].f; const j=fi+d; if(j>=0&&j<arr.length){ [arr[fi],arr[j]]=[arr[j],arr[fi]]; fldSel=[si,j]; render(); } return; }
   const fl=t.closest("[data-fld]"); if(fl){ fldSel=fl.dataset.fld.split(":").map(Number); render(); return; }
   const a=t.closest("[data-act]"); if(!a) return;
-  const act=a.dataset.act;
+  const act=a.dataset.act, c=a.dataset.id&&caseById(a.dataset.id);
   if(act==="closeDrawer") return closeDrawer();
   if(act==="navReset"){ NAV_ORDER=DEFAULT_ORDER.slice(); saveNav(); renderNav(); toast("Przywrócono domyślną kolejność zakładek"); return; }
-  if(act==="toggleFilters"){ filtersOpen=!filtersOpen; const fp=$("#fpanel"); fp&&fp.classList.toggle("open",filtersOpen); a.setAttribute("aria-expanded",filtersOpen); a.classList.toggle("on",filtersOpen); return; }
-  if(act==="clearAll"){ subF={st:"all",tpl:"all",period:"all",alert:false,q:"",sort:subF.sort}; render(); return; }
-  if(act==="unpick"){ picked.clear(); render(); return; }
-  if(act==="bulkApply"){ const st=$("#bulkSt").value, n=picked.size; SUBS.forEach(s=>{ if(picked.has(s.nr)) s.st=st; }); picked.clear(); render(); toast(`Zmieniono etap ${n} zgłoszeń na: ${STATUS[st]}`); return; }
-  if(act==="newInv"){ invOpen=true; lastLink=null; if(current()!=="zaproszenia") location.hash="zaproszenia"; else render(); setTimeout(()=>{const n=$("#invN"); n&&n.focus();},30); return; }
-  if(act==="closeInv"){ invOpen=false; lastLink=null; render(); return; }
-  if(act==="copyMail"){ const txt=$("#mailTxt").textContent; navigator.clipboard?.writeText(txt).then(()=>toast("Skopiowano treść maila")).catch(()=>toast("Nie udało się skopiować, zaznacz tekst ręcznie")); return; }
-  if(act==="copy"){ const txt=$("#lnk").textContent; navigator.clipboard?.writeText(txt).then(()=>toast("Skopiowano link")).catch(()=>{ const r=document.createRange(); r.selectNodeContents($("#lnk")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); toast("Zaznaczono link, skopiuj Cmd+C"); }); return; }
-  if(act==="remind"){ const i=INV.find(x=>x.id===a.dataset.id); i.rem++; render(); toast("Wysłano przypomnienie do "+i.n); return; }
-  if(act==="resend"){ const i=INV.find(x=>x.id===a.dataset.id); i.st="wyslane"; i.sent="2026-11-25"; i.exp="2026-12-09"; i.rem=0; render(); toast("Wysłano nowy link do "+i.n+" (ważny 14 dni)"); return; }
-  if(act==="setStatus"){ const s=SUBS.find(x=>x.nr===a.dataset.nr); s.st=$("#stSel").value; render(); openDrawer(subDrawer(s.nr)); toast(s.st==="popr"?"Status zmieniony. Wysłano prośbę o poprawę do "+person(s.p).n:"Status zmieniony na: "+STATUS[s.st]); return; }
-  if(act==="reveal"){ a.closest("dd").textContent=a.dataset.v; toast("Odsłonięcie zapisano w dzienniku zdarzeń"); return; }
-  if(act==="invPerson"){ const p=person(a.dataset.id); closeDrawer(); invOpen=true; location.hash="zaproszenia"; setTimeout(()=>{ $("#invN").value=p.n; $("#invE").value=p.em; },40); return; }
-  const msgs={sigRemind:"Autenti wyśle przypomnienie o podpisie (w makiecie tylko komunikat)",autentiTest:"W wersji docelowej system sprawdzi połączenie z Autenti",export:"W wersji docelowej pobierze się plik Excel z widocznymi zgłoszeniami",pdf:"W wersji docelowej pobierze się PDF z podpisem",note:"Notatka zapisana (widoczna dla zespołu)",askUpdate:"Wysłano prośbę o aktualizację danych",publish:"Opublikowano nową wersję. Nowe linki używają już tej wersji",preview:"W wersji docelowej otworzy się formularz tak, jak widzi go zleceniobiorca",newTpl:"W wersji docelowej utworzy się pusty szablon do edycji",addField:"Dodano pole „Nowe pole” (w makiecie tylko komunikat)",addSection:"Dodano sekcję (w makiecie tylko komunikat)",saveField:"Zapisano ustawienia pola",delField:"Usunięto pole (w makiecie tylko komunikat)",addUser:"W wersji docelowej osoba dostanie zaproszenie do pulpitu"};
-  if(msgs[act]){ if(act==="saveField"&&fldSel){ const f=TPL.find(x=>x.id===tplSel).sections[fldSel[0]].f[fldSel[1]]; f[0]=$("#fLab").value||f[0]; f[2]=$("#fReq").checked?1:0; if(!f[3]) f[1]=$("#fTyp").value; const c=$("#fCond").value; f[4]=c==="zawsze"?undefined:"gdy: "+c; render(); } if(act==="publish"){ const tt=TPL.find(x=>x.id===tplSel); tt.ver++; tt.status="opublikowany"; render(); } toast(msgs[act]); }
+  if(act==="tourAgain"){ try{ localStorage.removeItem(TOUR_KEY); }catch(_){} tourStep=0; if(location.hash==="#pulpit") { render(); maybeTour(); } else location.hash="pulpit"; return; }
+  if(act==="openNew"){ newForm(c&&c.st==="szkic"?c.id:null); closeDrawer(); if(location.hash==="#nowa") render(); else location.hash="nowa"; return; }
+  if(act==="verify"){ location.hash="weryfikacja-"+c.id; return; }
+  if(act==="preview"){ vTab="podglad"; location.hash="weryfikacja-"+c.id; return; }
+  if(act==="backToQueue"){ pendingScroll=pulpitScroll; location.hash="pulpit"; return; }
+  if(act==="copyFormLink"){ copyText(formLink(c),"Skopiowano link do formularza"); return; }
+  if(act==="copyLink"){ copyText(a.dataset.url,"Skopiowano link do formularza"); return; }
+  if(act==="retryLoad"){ loadError=false; demoState="normal"; render(); toast("Wczytano sprawy"); return; }
+  if(act==="clearQ"){ qF={q:"",kind:"all"}; render(); return; }
+  if(act==="clearList"){ listF={q:"",st:"all",kind:"all",who:"all"}; render(); return; }
+  if(DEMO_MSG[act]){ toast(DEMO_MSG[act]); return; }
+  if(act==="approve"){ approve(c); return; }
+  if(act==="skipForm"){ skipForm(); return; }
+  if(act==="invPerson"){ closeDrawer(); newForm(); NF.person=a.dataset.id; fillFromPerson(); location.hash="nowa"; return; }
+  const msgs={autentiTest:"Podgląd: połączenie z Autenti nie jest jeszcze sprawdzane",askUpdate:"Podgląd: prośba o aktualizację NIE została wysłana",publish:"Opublikowano nową wersję formularza (tylko w tej makiecie)",preview2:"W wersji docelowej otworzy się formularz tak, jak widzi go zleceniobiorca",newTpl:"W wersji docelowej utworzy się pusty szablon do edycji",addField:"Dodano pole „Nowe pole” (w makiecie tylko komunikat)",addSection:"Dodano sekcję (w makiecie tylko komunikat)",saveField:"Zapisano ustawienia pola",delField:"Usunięto pole (w makiecie tylko komunikat)",addUser:"Podgląd: zaproszenie do pulpitu NIE zostało wysłane"};
+  if(msgs[act]){ if(act==="saveField"&&fldSel){ const f=TPL.find(x=>x.id===tplSel).sections[fldSel[0]].f[fldSel[1]]; f[0]=$("#fLab").value||f[0]; f[2]=$("#fReq").checked?1:0; if(!f[3]) f[1]=$("#fTyp").value; const cd=$("#fCond").value; f[4]=cd==="zawsze"?undefined:"gdy: "+cd; render(); } if(act==="publish"){ const tt=TPL.find(x=>x.id===tplSel); tt.ver++; tt.status="opublikowany"; render(); } toast(msgs[act]); }
+});
+
+/* zatwierdzenie w trybie podglądu: zapis na ekranie, bez PDF i bez Autenti */
+function approve(c){
+  const d=draftOf(c); if(Object.keys(vErrors(d)).length){ toast("Najpierw uzupełnij braki."); return; }
+  const ch=vChanges(d), ts=stamp();
+  Object.assign(c,{kind:d.kind,tpl:d.tpl,c:{...d.c},t:{...d.t},st:"zatw_demo",since:ts,changed:ts,changedWhat:"Zatwierdzono w podglądzie (nic nie wysłano)",err:null});
+  if(ch.length) c.log.push([ts,"Poprawiono przed zatwierdzeniem: "+ch.map(x=>x.l.toLowerCase()).join(", ")+" (Anna Kowal)"]);
+  c.log.push([ts,"Zatwierdzono dane w podglądzie (Anna Kowal). PDF nie powstał, nic nie trafiło do Autenti."]);
+  delete VD[c.id];
+  openModal("Zatwierdzono w podglądzie",`<p class="mlead"><b>Nic nie zostało wysłane.</b> Integracja z Autenti jeszcze nie działa, więc PDF nie powstał i nikt nie dostał wiadomości.</p>
+    <div class="callout"><b>W wersji docelowej w tym momencie:</b><ol><li>zapisalibyśmy zatwierdzoną wersję danych (kto, kiedy, wersja szablonu),</li><li>powstałby PDF z tej wersji,</li><li>Autenti wysłałoby zaproszenie do podpisu: ${esc(cname(c))} oraz ${esc(OWNER.name)} (Eskander),</li><li>sprawa przeszłaby do „Oczekuje na podpisy”.</li></ol></div>
+    <p class="mnote">Sprawa ma teraz status <b>„Zatwierdzona (podgląd)”</b> i jest w sekcji „Ostatnio zakończone”.</p>
+    <div class="mbtns"><a class="btn ghost" href="#sprawa-${c.id}" data-act="closeDrawer">Zobacz sprawę</a><a class="btn action" href="#pulpit" data-autofocus>Wróć do kolejki</a></div>`);
+}
+function fillFromPerson(){ const p=person(NF.person); if(!p) return; const [im,...rest]=p.n.split(" "); NF.imie=im; NF.nazwisko=rest.join(" "); NF.email=p.em; }
+function syncNF(){ if(!NF||!$("#nForm")) return; const v=id=>($("#"+id)||{}).value??"";
+  Object.assign(NF,{tpl:v("nTpl")||NF.tpl,imie:v("nImie"),nazwisko:v("nNazw"),email:v("nEmail").trim(),zakres:v("nZakres"),kwota:v("nKwota"),od:v("nOd"),do:v("nDo")}); }
+function nfErrors(){ const e={};
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(NF.email)) e.email=NF.email?"Ten adres e-mail jest niepełny.":"Wpisz e-mail kontrahenta – na niego trafi link do formularza.";
+  if(!NF.zakres.trim()) e.zakres="Opisz, czego dotyczy umowa.";
+  if(!(+NF.kwota>0)) e.kwota="Wpisz kwotę większą od zera.";
+  if(!NF.od) e.od="Podaj datę początku."; if(!NF.do) e.do="Podaj datę końca."; else if(NF.od&&NF.do<NF.od) e.do="Koniec nie może być przed początkiem.";
+  return e; }
+function caseFromNF(st,extra){
+  const ts=stamp(), base=NF.caseId&&caseById(NF.caseId);
+  const pc=NF.person&&CASES.find(x=>x.p===NF.person&&x.c.pesel);
+  const c=base||{id:"um-"+Date.now().toString(36),nr:nextNr(),log:[]};
+  Object.assign(c,{p:NF.person||"",kind:NF.kind,tpl:NF.tpl,st,since:ts,changed:ts,
+    c:st==="weryf"&&pc?{...pc.c,email:NF.email}:{imie:NF.imie.trim(),nazwisko:NF.nazwisko.trim(),pesel:"",adres:"",email:NF.email,tel:"",konto:""},
+    t:{zakres:NF.zakres.trim(),kwota:NF.kwota,od:NF.od,do:NF.do,miejsce:""},...extra});
+  if(!base) CASES.unshift(c);
+  return c; }
+function skipForm(){ syncNF(); const e=nfErrors(); delete e.email; NF.err=e; if(Object.keys(e).length){ render(); focusFirstErr(); return; }
+  const p=person(NF.person), c=caseFromNF("weryf",{changedWhat:"Dane z kartoteki"}); c.log.push([c.since,`Utworzono sprawę z danymi z kartoteki (potwierdzone ${dFull(p.last)}) – bez formularza (Anna Kowal)`]);
+  NF=null; location.hash="weryfikacja-"+c.id; }
+function focusFirstErr(){ const f=$("#nForm [aria-invalid=true]"); f&&(f.scrollIntoView({block:"center"}),f.focus({preventScroll:true})); }
+document.addEventListener("submit",e=>{
+  if(e.target.id!=="nForm") return; e.preventDefault(); syncNF();
+  NF.err=nfErrors(); if(Object.keys(NF.err).length){ const y=scrollY; render(); window.scrollTo(0,y); focusFirstErr(); return; }
+  const until=new Date(Date.now()+14*864e5);
+  const c=caseFromNF("dane",{invUntil:isoDay(until),demoInv:true,changedWhat:"Utworzono sprawę (podgląd)"});
+  c.log.push([c.since,"Utworzono sprawę i link do formularza (Anna Kowal). Podgląd: e-mail NIE został wysłany przez system."]);
+  // POKAZ: zapamiętaj zaproszenie w tej przeglądarce, żeby zgłoszenie z formularza (GitHub) trafiło do tej sprawy
+  const arr=readLS(INV_KEY); arr.unshift({id:c.id,nr:c.nr,n:cname(c),em:c.c.email,tpl:c.kind,kind:c.kind,tplId:c.tpl,sent:c.since.slice(0,10),exp:c.invUntil,t:c.t,p:c.p}); writeLS(INV_KEY,arr.slice(0,30));
+  NF=null; selId=c.id;
+  const url=formLink(c), subject="Eskander – dane do umowy", body=`Dzień dobry,\n\nprzygotowujemy dla Pana/Pani umowę (${KIND[c.kind].toLowerCase()}): ${c.t.zakres}. Prosimy o uzupełnienie danych – zajmie to ok. 5 minut i działa na telefonie:\n\n${url}\n\nPo sprawdzeniu danych otrzyma Pan/Pani osobną wiadomość od Autenti z umową do podpisu.\n\nPozdrawiamy,\n${OWNER.name}, Eskander`;
+  location.hash="sprawa-"+c.id;
+  setTimeout(()=>openModal("Sprawa zapisana – e-mail nie został wysłany",`<p class="mlead">Sprawa <b>${esc(c.nr)}</b> (${esc(cname(c))}) czeka teraz na dane od klienta. <b>System nie wysłał e-maila</b> (to wersja pokazowa).</p>
+    <p class="mnote">Jeśli chcesz sprawdzić formularz, przekaż link samodzielnie. Gdy osoba wyśle formularz w tej przeglądarce, sprawa przejdzie do „Do weryfikacji”.</p>
+    <div class="linkbox"><code id="lnk">${esc(url)}</code></div>
+    <div class="mbtns"><a class="btn ghost" href="${esc("mailto:"+encodeURIComponent(c.c.email)+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body))}">Otwórz w swoim programie pocztowym</a><button class="btn action" type="button" data-act="copyLink" data-url="${esc(url)}" data-autofocus>Kopiuj link</button></div>`),60);
 });
 document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"&&$("#drawerRoot").innerHTML) closeDrawer();
-  if((e.key==="Enter"||e.key===" ")&&e.target.matches&&e.target.matches(".fld,tbody tr[data-sub],.task[data-sub],.dl li")){ e.preventDefault(); e.target.click(); }
+  if(e.key==="Escape"){ if($("#tour")){ endTour(); return; } if($("#drawerRoot").innerHTML) closeDrawer(); }
+  if((e.key==="Enter"||e.key===" ")&&e.target.matches&&e.target.matches(".fld,tbody tr[data-open]")){ e.preventDefault(); e.target.click(); }
 });
-document.addEventListener("input",e=>{
-  if(e.target.id==="subQ"){ subF.q=e.target.value; const pos=e.target.selectionStart; render(); const i=$("#subQ"); i.focus(); i.setSelectionRange(pos,pos); }
-  if(e.target.id==="tplQ"){ tplQ=e.target.value; const pos=e.target.selectionStart; render(); const i=$("#tplQ"); i.focus(); i.setSelectionRange(pos,pos); }
-  if(e.target.id==="pplQ"){ pplQ=e.target.value; const pos=e.target.selectionStart; render(); const i=$("#pplQ"); i.focus(); i.setSelectionRange(pos,pos); }
+document.addEventListener("input",e=>{ const el=e.target, id=el.id;
+  if(id==="qQ"){ qF.q=el.value; $("#queue").innerHTML=queueHTML(); return; }
+  if(id==="lQ"){ listF.q=el.value; const pos=el.selectionStart; render(); const i=$("#lQ"); i.focus(); i.setSelectionRange(pos,pos); return; }
+  if(id==="tplQ"){ tplQ=el.value; const pos=el.selectionStart; render(); const i=$("#tplQ"); i.focus(); i.setSelectionRange(pos,pos); return; }
+  if(id==="pplQ"){ pplQ=el.value; const pos=el.selectionStart; render(); const i=$("#pplQ"); i.focus(); i.setSelectionRange(pos,pos); return; }
+  if(el.dataset&&el.dataset.vk&&el.tagName!=="SELECT"){ const r=route(), d=draftOf(caseById(r.id)); setP(d,el.dataset.vk,el.value); refreshVerify(r.id); return; }
+  if(el.closest&&el.closest("#nForm")&&NF){ const map={nEmail:"email",nZakres:"zakres",nKwota:"kwota",nOd:"od",nDo:"do"}; const k=map[id]; if(k&&NF.err[k]){ delete NF.err[k]; el.removeAttribute("aria-invalid"); const p=$("#nf-"+k+"-e"); p&&p.remove(); } }
 });
-document.addEventListener("change",e=>{ const id=e.target.id;
-  if(id==="fTpl"){ subF.tpl=e.target.value; render(); } if(id==="fPer"){ subF.period=e.target.value; render(); } if(id==="fSt"){ subF.st=e.target.value; render(); }
-  if(id==="fAl"){ subF.alert=e.target.checked; render(); } if(id==="subSort"){ subF.sort=e.target.value; render(); } });
-document.addEventListener("keydown",e=>{ if(e.target.id==="globalQ"&&e.key==="Enter"){ subF={...subF,q:e.target.value.trim(),st:"all"}; location.hash="zgloszenia"; } });
-document.addEventListener("submit",e=>{
-  if(e.target.id!=="invF") return; e.preventDefault();
-  const n=$("#invN").value.trim(), em=$("#invE").value.trim(), err=$("#invErr");
-  if(!n||!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){ err.hidden=false; err.textContent=!n?"Wpisz imię i nazwisko.":"Wpisz poprawny adres e-mail."; return; }
-  const tpl=$("#invT").value, days=parseInt($("#invX").value,10);
-  const tok=Array.from(crypto.getRandomValues(new Uint8Array(9)),b=>"abcdefghjkmnpqrstuvwxyz23456789"[b%31]).join("");
-  // link osobisty do formularza testowego na GitHub Pages (tylko dane nieczułe w adresie)
-  const parts=n.split(/\s+/), imie=parts[0], nazw=parts.slice(1).join(" ");
-  const nr="INV-"+tok.slice(0,6).toUpperCase();
-  const q=new URLSearchParams({imie,nazwisko:nazw,email:em,nr}); if(tpl==="zl") q.set("umowa","zlecenie"); if(tpl==="dz") q.set("umowa","dzielo");
-  const url=FORM_URL+"?"+q.toString();
-  const msg=($("#invM").value||"").trim();
-  const subject="Eskander: prośba o uzupełnienie danych do umowy";
-  const body=`Dzień dobry ${imie},\n\nprosimy o uzupełnienie danych potrzebnych do przygotowania umowy (${tplName(tpl).toLowerCase()}). Formularz zajmuje ok. 5–8 minut, przygotuj dowód osobisty i numer konta:\n\n${url}\n\nLink jest ważny ${days} dni.${msg?"\n\n"+msg:""}\n\nDane są przesyłane szyfrowanym połączeniem i trafiają wyłącznie do działu kadr.\n\nPozdrawiamy,\nEskander`;
-  { const t=new Date(), z=x=>String(x).padStart(2,"0"), iso=d=>`${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`, ex=new Date(t.getTime()+days*864e5);
-    const inv={id:"i"+Date.now(),nr,n,em,tpl,sent:iso(t),exp:iso(ex),st:"wyslane",rem:0,step:0}; const arr=readLS(INV_KEY); arr.unshift(inv); writeLS(INV_KEY,arr.slice(0,30)); loadDemo(); }
-  lastLink={n,em,url,subject,body,mailto:"mailto:"+encodeURIComponent(em)+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body)};
-  render(); toast("Link gotowy. Otwórz go w poczcie i wyślij do "+n);
+document.addEventListener("change",e=>{ const el=e.target, id=el.id;
+  if(id==="qKind"){ qF.kind=el.value; $("#queue").innerHTML=queueHTML(); return; }
+  if(id==="lKind"){ listF.kind=el.value; render(); $("#lKind").focus(); return; }
+  if(id==="lWho"){ listF.who=el.value; render(); $("#lWho").focus(); return; }
+  if(id==="nTpl"){ NF.tpl=el.value; return; }
+  if(id==="nPerson"){ syncNF(); NF.person=el.value; if(NF.person) fillFromPerson(); const y=scrollY; render(); window.scrollTo(0,y); $("#nPerson").focus(); return; }
+  if(id==="demoState"){ demoState=el.value; loadError=el.value==="error"; if(route().v!=="pulpit") location.hash="pulpit"; else render(); return; }
+  if(el.dataset&&el.dataset.vk&&el.tagName==="SELECT"){ const r=route(), d=draftOf(caseById(r.id)); setP(d,el.dataset.vk,el.value); if(el.dataset.vk==="kind") d.tpl=TEMPLATES.find(x=>x.kind===el.value).id; const y=scrollY; render(); window.scrollTo(0,y); const f=document.getElementById(fid(el.dataset.vk)); f&&f.focus({preventScroll:true}); return; }
 });
-/* ---------- POKAZ: zgłoszenia z formularza i wysłane linki (pamięć tej przeglądarki) ---------- */
+document.addEventListener("keydown",e=>{ if(e.target.id==="lQ"&&e.key==="Escape"&&e.target.value){ listF.q=""; render(); $("#lQ").focus(); } });
+
+/* ---------- przewodnik dla nowej osoby (4 kroki, można pominąć) ---------- */
+const TOUR_KEY="eskander-pulpit-przewodnik";
+const TOUR=[
+  {sel:"[data-tour=new]",t:"Nowa umowa",p:"Tu zaczynasz każdą umowę: wybierasz typ i szablon, kontrahenta i warunki. Klient dostaje link do formularza."},
+  {sel:"#hTodo",t:"Do zrobienia",p:"Sprawy, w których ruch należy do Ciebie. Najpilniejsze są na górze: błędy wysyłki, potem dane do sprawdzenia."},
+  {sel:"#hWait",t:"Czekamy na innych",p:"Tu nic nie musisz robić – widzisz, na kogo czekamy i od kiedy (klient z danymi, podpisujący w Autenti)."},
+  {sel:"#detail .dnext, .qlist .qrow",t:"Jeden następny krok",p:"Każda sprawa ma jedno zdanie, co dalej, i jeden główny przycisk. Dane przed podpisem zawsze sprawdzasz na ekranie weryfikacji."},
+];
+let tourStep=0;
+function tourDone(){ try{ return localStorage.getItem(TOUR_KEY)==="1"; }catch(_){ return true; } }
+function maybeTour(){ if(route().v==="pulpit"&&!route().id&&!tourDone()&&!loadError) setTimeout(showTour,REDUCED?0:350); }
+function showTour(){ const s=TOUR[tourStep]; if(!s){ endTour(); return; } const el=document.querySelector(s.sel); document.querySelectorAll(".tour-hl").forEach(x=>x.classList.remove("tour-hl"));
+  if(el){ el.classList.add("tour-hl"); el.scrollIntoView({block:"center",behavior:REDUCED?"auto":"smooth"}); }
+  let box=$("#tour"); if(!box){ box=document.createElement("div"); box.id="tour"; box.className="tour"; box.setAttribute("role","dialog"); box.setAttribute("aria-labelledby","tourT"); document.body.appendChild(box); }
+  box.innerHTML=`<p class="tour-n">Pierwszy raz tutaj? · krok ${tourStep+1} z ${TOUR.length}</p><h2 id="tourT">${esc(s.t)}</h2><p>${esc(s.p)}</p><div class="tour-b"><button class="btn ghost sm" type="button" data-tour-act="skip">Pomiń przewodnik</button><button class="btn action sm" type="button" data-tour-act="next">${tourStep===TOUR.length-1?"Zaczynam":"Dalej"}</button></div>`;
+  box.querySelector("[data-tour-act=next]").focus({preventScroll:true}); }
+function endTour(){ try{ localStorage.setItem(TOUR_KEY,"1"); }catch(_){} const b=$("#tour"); b&&b.remove(); document.querySelectorAll(".tour-hl").forEach(x=>x.classList.remove("tour-hl")); tourStep=0; }
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-tour-act]"); if(!b) return; if(b.dataset.tourAct==="skip") endTour(); else { tourStep++; showTour(); } });
+
+/* ---------- POKAZ: zgłoszenia z formularza na GitHub Pages (pamięć tej przeglądarki) ---------- */
 const DEMO_KEY="eskander-demo-zgloszenia", INV_KEY="eskander-demo-zaproszenia";
 const readLS=k=>{ try{ return JSON.parse(localStorage.getItem(k)||"[]"); }catch(e){ return []; } };
 const writeLS=(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} };
+function rowVal(z,labels){ const r=(z.rows||[]).find(x=>labels.includes(String(x[1]).trim())); return r?String(r[2]):""; }
 function loadDemo(){
-  for(let i=SUBS.length-1;i>=0;i--) if(SUBS[i].demo) SUBS.splice(i,1);
-  for(let i=PEOPLE.length-1;i>=0;i--) if(PEOPLE[i].demo) PEOPLE.splice(i,1);
-  for(let i=INV.length-1;i>=0;i--) if(INV[i].demo) INV.splice(i,1);
+  CASES=CASES.filter(c=>!c.demo); for(let i=PEOPLE.length-1;i>=0;i--) if(PEOPLE[i].demo) PEOPLE.splice(i,1);
   const subs=readLS(DEMO_KEY), invs=readLS(INV_KEY);
+  invs.slice().reverse().forEach(v=>{ if(!v.nr||caseById(v.id)) return;
+    CASES.unshift({id:v.id&&/^[\w-]+$/.test(v.id)?v.id:"inv-"+String(v.nr).replace(/\W/g,"").toLowerCase(),nr:v.nr,p:v.p||"",kind:v.kind||(v.tpl==="dz"?"dz":"zl"),tpl:v.tplId||(v.tpl==="dz"?"dz-std":"zl-std"),st:"dane",since:(v.sent||"2026-11-28")+(String(v.sent).length<=10?" 09:00":""),changed:v.sent+" 09:00",changedWhat:"Utworzono sprawę (podgląd)",invUntil:v.exp,demoInv:true,demo:true,
+      c:{imie:(v.n||"").split(" ")[0],nazwisko:(v.n||"").split(" ").slice(1).join(" "),pesel:"",adres:"",email:v.em||"",tel:"",konto:""},t:v.t||{zakres:"",kwota:"",od:"",do:"",miejsce:""},
+      log:[[v.sent+" 09:00","Utworzono sprawę i link do formularza. Podgląd: e-mail NIE został wysłany przez system."]]}); });
   subs.slice().reverse().forEach(z=>{
     const pid="d_"+z.nr, name=`${z.imie||""} ${z.nazwisko||""}`.trim()||"(bez imienia i nazwiska)";
     PEOPLE.push({id:pid,n:name,em:z.email||"—",pesel:"",ur:"2000-01-01",city:z.miejscowosc||"—",umowy:1,last:z.date.slice(0,10),flags:[],demo:true});
-    SUBS.unshift({nr:z.nr,p:pid,tpl:z.rodzaj==="dzielo"?"dz":"zl",date:z.date,st:z.st||"nowe",files:z.docs||[],rows:z.rows||[],inv:z.inv||"",demo:true});
+    const adres=[rowVal(z,["Ulica"]),rowVal(z,["Nr domu"])].filter(Boolean).join(" ")+(rowVal(z,["Nr mieszkania"])?"/"+rowVal(z,["Nr mieszkania"]):"");
+    const adr=[adres,[rowVal(z,["Kod pocztowy"]),rowVal(z,["Miejscowość"])||z.miejscowosc].filter(Boolean).join(" ")].filter(Boolean).join(", ");
+    const cl={imie:z.imie||"",nazwisko:z.nazwisko||"",pesel:rowVal(z,["PESEL"]),adres:adr,email:z.email||"",tel:rowVal(z,["Telefon"]),konto:rowVal(z,["Numer rachunku bankowego"])};
+    const norm=x=>String(x||"").replace(/[^A-Za-z0-9-]/g,""); // formularz usuwa z numeru znaki inne niż litery, cyfry i myślniki
+    const inv=z.inv&&CASES.find(c=>norm(c.nr)===norm(z.inv));
+    const log=[z.date,"Klient przesłał dane przez formularz (pokaz na GitHub Pages)"];
+    if(inv&&inv.st==="dane"){ Object.assign(inv,{st:"weryf",since:z.date,changed:z.date,changedWhat:"Klient przesłał dane",c:{...inv.c,...Object.fromEntries(Object.entries(cl).filter(([k,x])=>x))}}); inv.log.push(log); return; }
+    CASES.unshift({id:"demo-"+String(z.nr).replace(/[^\w-]/g,"").toLowerCase(),nr:z.nr,p:pid,kind:z.rodzaj==="dzielo"?"dz":"zl",tpl:z.rodzaj==="dzielo"?"dz-std":"zl-std",st:"weryf",since:z.date,changed:z.date,changedWhat:"Klient przesłał dane (formularz – pokaz)",demo:true,
+      c:cl,t:{zakres:"",kwota:"",od:"",do:"",miejsce:""},log:[log]});
   });
-  invs.slice().reverse().forEach(v=>{ const fill=subs.find(z=>z.inv&&z.inv===v.nr); INV.unshift({...v,demo:true,st:fill?"wypelnione":"wyslane",step:fill?8:0}); });
 }
 loadDemo();
-window.addEventListener("storage",e=>{ if(e.key===DEMO_KEY||e.key===INV_KEY){ loadDemo(); render(); toast("Nowe zgłoszenie z formularza"); } });
-document.addEventListener("click",e=>{
-  const a=e.target.closest("[data-act]"); if(!a) return;
-  if(a.dataset.act==="demoDel"){ writeLS(DEMO_KEY,readLS(DEMO_KEY).filter(z=>z.nr!==a.dataset.nr)); loadDemo(); closeDrawer(); render(); toast("Usunięto zgłoszenie z pokazu"); }
-  if(a.dataset.act==="setStatus"){ const arr=readLS(DEMO_KEY), z=arr.find(x=>x.nr===a.dataset.nr); if(z){ const s=SUBS.find(x=>x.nr===z.nr); if(s){ z.st=s.st; writeLS(DEMO_KEY,arr); } } }
-});
-render();
+window.addEventListener("storage",e=>{ if(e.key===DEMO_KEY||e.key===INV_KEY){ loadDemo(); render(); toast("Nowe dane z formularza – sprawa czeka na weryfikację"); } });
+render(); maybeTour();
 })();
+
 </script>
 
 </body>
